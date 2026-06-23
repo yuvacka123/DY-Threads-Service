@@ -8,7 +8,9 @@
 <meta name="apple-mobile-web-app-title" content="DY-Threads">
 <meta name="theme-color" content="#0A0A0A">
 <link rel="manifest" href="/DY-Threads-Service/manifest.json">
-<link rel="apple-touch-icon" href="/DY-Threads-Service/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/DY-Threads-Service/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/DY-Threads-Service/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/DY-Threads-Service/icons/favicon-16.png">
 <title>DY-Threads</title>
 <style>
 :root {
@@ -686,6 +688,76 @@ body {
 .about-thread { height: 1.5px; background: var(--gold); margin: 8px auto; width: 48px; opacity: .7; }
 .about-ver { font-size: 12px; color: rgba(255,255,255,.35); margin-top: 6px; }
 
+
+/* ── CUSTOM DATE PICKER (fixes Safari PWA standalone mode) ── */
+.date-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 998;
+  align-items: flex-end;
+  justify-content: center;
+}
+.date-modal-overlay.open { display: flex; }
+.date-modal {
+  background: var(--card);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 430px;
+  padding: 0 0 env(safe-area-inset-bottom);
+  overflow: hidden;
+  animation: slideUp .25s ease;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.date-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 0.5px solid var(--sep);
+}
+.date-modal-title { font-size: 15px; font-weight: 600; color: var(--ink); }
+.date-modal-done {
+  background: none; border: none;
+  font-size: 16px; font-weight: 600;
+  color: var(--gold); cursor: pointer;
+  font-family: inherit; padding: 4px 0;
+}
+.date-modal-cancel {
+  background: none; border: none;
+  font-size: 16px; color: var(--ink3);
+  cursor: pointer; font-family: inherit; padding: 4px 0;
+}
+.date-modal-body { padding: 16px 20px 20px; }
+.date-native-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 18px;
+  font-family: inherit;
+  border: 1.5px solid var(--sep);
+  border-radius: 12px;
+  color: var(--ink);
+  background: var(--bg);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.date-native-input:focus { border-color: var(--gold); }
+.date-display {
+  flex: 1;
+  text-align: right;
+  font-size: 15px;
+  color: var(--ink2);
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+}
+.date-display.empty { color: var(--ink3); }
+
 /* ── GARMENT PHOTOS ── */
 .photo-section { padding: 14px; }
 .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
@@ -998,8 +1070,10 @@ body {
 
     <div class="sec-label">Dates</div>
     <div class="card">
-      <div class="form-row"><label>Trial fitting</label><input type="date" id="o-trial"></div>
-      <div class="form-row"><label>Delivery date</label><input type="date" id="o-del"></div>
+      <div class="form-row"><label>Trial fitting</label><button class="date-display empty" id="o-trial-btn" onclick="openDatePicker('o-trial', 'Trial Fitting Date')">Select date</button>
+          <input type="hidden" id="o-trial" value=""></div>
+      <div class="form-row"><label>Delivery date</label><button class="date-display empty" id="o-del-btn" onclick="openDatePicker('o-del', 'Delivery Date')">Select date</button>
+          <input type="hidden" id="o-del" value=""></div>
       <div class="form-row"><label>Priority</label>
         <select id="o-pri"><option>Normal</option><option>Express (+₹200)</option><option>Urgent (+₹500)</option></select>
       </div>
@@ -1069,7 +1143,8 @@ body {
     <div class="form-row"><label>Customer</label><input id="msg-name" placeholder="Name" oninput="renderMsgs()"></div>
     <div class="form-row"><label>Garment</label><input id="msg-gar" placeholder="Salwar Kameez" oninput="renderMsgs()"></div>
     <div class="form-row"><label>Balance (₹)</label><input type="number" id="msg-bal" placeholder="0" oninput="renderMsgs()" style="text-align:right"></div>
-    <div class="form-row"><label>Delivery date</label><input type="date" id="msg-date" oninput="renderMsgs()"></div>
+    <div class="form-row"><label>Delivery date</label><button class="date-display empty" id="msg-date-btn" onclick="openDatePicker('msg-date', 'Delivery Date')">Select date</button>
+          <input type="hidden" id="msg-date" value=""></div>
   </div>
   <div class="sec-label">Templates</div>
   <div class="wa-card">
@@ -1133,6 +1208,21 @@ body {
 </div>
 
 
+
+<!-- DATE PICKER MODAL (Safari PWA fix) -->
+<div class="date-modal-overlay" id="date-modal-overlay" onclick="cancelDatePicker(event)">
+  <div class="date-modal">
+    <div class="date-modal-header">
+      <button class="date-modal-cancel" onclick="closeDatePicker(false)">Cancel</button>
+      <span class="date-modal-title" id="date-modal-title">Select Date</span>
+      <button class="date-modal-done" onclick="closeDatePicker(true)">Done</button>
+    </div>
+    <div class="date-modal-body">
+      <input class="date-native-input" type="date" id="date-modal-input">
+    </div>
+  </div>
+</div>
+
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
@@ -1143,6 +1233,47 @@ body {
 
 <script>
 let orders = [], priceItems = [], currentStep = 1;
+
+/* ── DATE PICKER (Safari PWA fix) ── */
+let _datePickerTarget = null;
+let _datePickerCallback = null;
+
+function openDatePicker(fieldId, label) {
+  _datePickerTarget = fieldId;
+  document.getElementById('date-modal-title').textContent = label || 'Select Date';
+  // Pre-fill with existing value
+  const existing = document.getElementById(fieldId).value;
+  document.getElementById('date-modal-input').value = existing || '';
+  document.getElementById('date-modal-overlay').classList.add('open');
+}
+
+function closeDatePicker(confirm) {
+  const overlay = document.getElementById('date-modal-overlay');
+  overlay.classList.remove('open');
+  if (confirm && _datePickerTarget) {
+    const val = document.getElementById('date-modal-input').value;
+    document.getElementById(_datePickerTarget).value = val;
+    const btn = document.getElementById(_datePickerTarget + '-btn');
+    if (btn) {
+      if (val) {
+        btn.textContent = new Date(val + 'T00:00:00').toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'});
+        btn.classList.remove('empty');
+      } else {
+        btn.textContent = 'Select date';
+        btn.classList.add('empty');
+      }
+    }
+    // Trigger renderMsgs if it's the comm date field
+    if (_datePickerTarget === 'msg-date') renderMsgs();
+  }
+  _datePickerTarget = null;
+}
+
+function cancelDatePicker(e) {
+  // Only close if clicking the overlay itself, not the modal
+  if (e.target === document.getElementById('date-modal-overlay')) closeDatePicker(false);
+}
+
 let garmentPhotos = [];
 
 function addPhotos(input) {
@@ -1253,6 +1384,13 @@ function resetForm() {
   document.getElementById('o-qty').value = 1;
   renderPriceItems(); calcTotal(); goStep(1);
   renderPhotoGrid();
+  // Reset date buttons
+  ['o-trial','o-del'].forEach(id => {
+    const btn = document.getElementById(id + '-btn');
+    if (btn) { btn.textContent = 'Select date'; btn.classList.add('empty'); }
+    const inp = document.getElementById(id);
+    if (inp) inp.value = '';
+  });
 }
 
 function v(id) { return (document.getElementById(id)?.value || '').trim(); }
