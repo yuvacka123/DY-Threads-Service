@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Darzi Studio">
+<meta name="theme-color" content="#7c2d12">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>Darzi Studio</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f0eb;min-height:100vh;padding-bottom:80px}
+.topbar{background:#7c2d12;color:white;padding:52px 16px 14px;position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:10px}
+.topbar h1{font-size:20px;font-weight:600}
+.topbar p{font-size:12px;opacity:.7;margin-top:1px}
+.topbar-icon{font-size:24px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e5e7eb;display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.nav-btn{flex:1;padding:10px 4px 8px;background:none;border:none;color:#9ca3af;font-size:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:inherit;transition:color .15s}
+.nav-btn.active{color:#7c2d12}
+.nav-btn svg{width:22px;height:22px}
+.page{display:none;padding:16px;max-width:600px;margin:0 auto}
+.page.active{display:block}
+.card{background:white;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.section-title{font-size:11px;font-weight:600;color:#9a3412;text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #fed7aa}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:#6b7280;font-weight:500;margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;padding:11px 13px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:15px;font-family:inherit;background:white;color:#111827;-webkit-appearance:none;appearance:none;outline:none}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:36px}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#9a3412}
+.field textarea{resize:vertical;min-height:80px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.btn-primary{width:100%;background:#7c2d12;color:white;border:none;padding:14px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-secondary{width:100%;background:white;color:#7c2d12;border:1.5px solid #7c2d12;padding:13px;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;font-family:inherit;margin-top:8px}
+.chip-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.chip{padding:6px 14px;border-radius:20px;font-size:13px;border:1.5px solid #e5e7eb;cursor:pointer;background:white;color:#374151;transition:all .15s;font-family:inherit}
+.chip.active{background:#7c2d12;color:white;border-color:#7c2d12}
+.unit-toggle{display:flex;background:#f3f4f6;border-radius:10px;overflow:hidden;width:fit-content;margin-bottom:14px}
+.unit-btn{padding:7px 18px;border:none;background:transparent;font-size:14px;cursor:pointer;color:#6b7280;font-family:inherit}
+.unit-btn.active{background:#7c2d12;color:white;border-radius:8px}
+.meas-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mf label{font-size:12px;color:#6b7280;display:block;margin-bottom:4px}
+.miw{display:flex;align-items:center;border:1.5px solid #e5e7eb;border-radius:10px;overflow:hidden;background:white}
+.miw input{border:none;background:transparent;padding:10px 10px;font-size:15px;color:#111827;flex:1;min-width:0;font-family:inherit;outline:none}
+.miw span{font-size:12px;color:#9ca3af;padding:0 10px 0 0}
+.miw:focus-within{border-color:#9a3412}
+.order-card{background:white;border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.oa{width:42px;height:42px;border-radius:50%;background:#fde8d8;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#9a3412;flex-shrink:0}
+.oi{flex:1;min-width:0}
+.on{font-size:15px;font-weight:600;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.os{font-size:12px;color:#6b7280;margin-top:2px}
+.badge{font-size:11px;padding:4px 10px;border-radius:10px;font-weight:600;white-space:nowrap}
+.b-meas{background:#fef3c7;color:#92400e}
+.b-stitch{background:#dbeafe;color:#1e40af}
+.b-ready{background:#d1fae5;color:#065f46}
+.b-delivered{background:#f3f4f6;color:#374151}
+.summary-box{background:#fff7ed;border:1.5px solid #fed7aa;border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.sr{display:flex;justify-content:space-between;font-size:14px;padding:4px 0;color:#111827}
+.sr.tot{font-weight:700;font-size:16px;border-top:1px solid #fed7aa;padding-top:10px;margin-top:6px}
+.sr.disc{color:#059669}
+.price-item{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #f3f4f6}
+.price-item:last-child{border:none}
+.pi-name{flex:1;font-size:14px;color:#111827}
+.pi-meta{font-size:12px;color:#9ca3af}
+.pi-amt{font-size:14px;font-weight:600;color:#111827;min-width:60px;text-align:right}
+.rm-btn{background:none;border:none;cursor:pointer;color:#d1d5db;padding:0 4px;font-size:18px;line-height:1}
+.rm-btn:active{color:#ef4444}
+.add-row{display:grid;grid-template-columns:1fr 52px 80px auto;gap:8px;align-items:center;margin-bottom:14px}
+.add-row input{padding:10px 10px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;font-family:inherit;color:#111827;background:white;outline:none}
+.add-row input:focus{border-color:#9a3412}
+.add-btn{background:#7c2d12;color:white;border:none;width:40px;height:40px;border-radius:10px;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.wa-card{background:white;border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.wa-title{font-size:14px;font-weight:600;color:#111827;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.wa-title-icon{color:#25d366;font-size:18px}
+.wa-preview{background:#f0fdf4;border-radius:10px;padding:12px;font-size:13px;color:#111827;line-height:1.6;white-space:pre-wrap;word-break:break-word;margin-bottom:8px}
+.copy-btn{background:#f3f4f6;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;color:#374151;cursor:pointer;font-family:inherit;width:100%}
+.copy-btn:active{background:#e5e7eb}
+.metric-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+.metric{background:white;border-radius:12px;padding:12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.metric-val{font-size:22px;font-weight:700;color:#7c2d12}
+.metric-label{font-size:11px;color:#9ca3af;margin-top:2px}
+.empty-state{text-align:center;padding:40px 20px;color:#9ca3af}
+.empty-state svg{width:48px;height:48px;margin:0 auto 12px;display:block;opacity:.4}
+.empty-state p{font-size:15px}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#111827;color:white;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:opacity .2s;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1}
+.steps{display:flex;gap:0;margin-bottom:20px}
+.step{flex:1;text-align:center;font-size:11px;color:#9ca3af;position:relative;padding-bottom:8px}
+.step::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:#e5e7eb;border-radius:2px}
+.step.active{color:#7c2d12;font-weight:600}
+.step.active::after{background:#7c2d12}
+.step.done::after{background:#fed7aa}
+.status-select{padding:4px 10px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:12px;font-family:inherit;background:white;color:#374151;cursor:pointer}
+.order-detail-card{background:white;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.dl{display:flex;justify-content:space-between;font-size:14px;padding:5px 0;border-bottom:1px solid #f9fafb}
+.dl:last-child{border:none}
+.dl span:first-child{color:#6b7280}
+.dl span:last-child{font-weight:500;color:#111827;text-align:right;max-width:60%}
+.back-btn{background:none;border:none;font-size:14px;color:#7c2d12;cursor:pointer;font-family:inherit;font-weight:500;padding:0;display:flex;align-items:center;gap:4px;margin-bottom:14px}
+.search-box{width:100%;padding:11px 13px 11px 38px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:15px;font-family:inherit;background:white;color:#111827;outline:none;margin-bottom:14px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:13px center}
+.search-box:focus{border-color:#9a3412}
+.fab{position:fixed;bottom:80px;right:20px;width:56px;height:56px;background:#7c2d12;color:white;border:none;border-radius:50%;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(124,45,18,.4);z-index:99}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-icon">✂️</span>
+  <div>
+    <h1>Darzi Studio</h1>
+    <p>Custom Indian Tailoring</p>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showPage('orders')" id="nav-orders">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 12 2 2 4-4"/></svg>
+    Orders
+  </button>
+  <button class="nav-btn" onclick="showPage('new-order')" id="nav-new-order">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+    New Order
+  </button>
+  <button class="nav-btn" onclick="showPage('comm')" id="nav-comm">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Comms
+  </button>
+  <button class="nav-btn" onclick="showPage('settings')" id="nav-settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+    Settings
+  </button>
+</nav>
+
+<!-- ===== ORDERS PAGE ===== -->
+<div class="page active" id="page-orders">
+  <div class="metric-row">
+    <div class="metric"><div class="metric-val" id="m-total">0</div><div class="metric-label">Total</div></div>
+    <div class="metric"><div class="metric-val" id="m-active" style="color:#1d4ed8">0</div><div class="metric-label">In Progress</div></div>
+    <div class="metric"><div class="metric-val" id="m-ready" style="color:#059669">0</div><div class="metric-label">Ready</div></div>
+  </div>
+  <input class="search-box" placeholder="Search customer or garment..." oninput="renderOrders(this.value)">
+  <div id="order-list"></div>
+</div>
+
+<!-- ===== ORDER DETAIL PAGE ===== -->
+<div class="page" id="page-order-detail">
+  <button class="back-btn" onclick="showPage('orders')">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Back to orders
+  </button>
+  <div id="order-detail-content"></div>
+</div>
+
+<!-- ===== NEW ORDER PAGE ===== -->
+<div class="page" id="page-new-order">
+  <div class="steps">
+    <div class="step active" id="step1">1. Customer</div>
+    <div class="step" id="step2">2. Measure</div>
+    <div class="step" id="step3">3. Order</div>
+    <div class="step" id="step4">4. Pricing</div>
+  </div>
+
+  <!-- STEP 1: CUSTOMER -->
+  <div id="s1" class="card">
+    <div class="section-title">Customer details</div>
+    <div class="row2">
+      <div class="field"><label>Full name *</label><input id="c-name" placeholder="Priya Sharma"></div>
+      <div class="field"><label>Mobile *</label><input id="c-phone" type="tel" placeholder="+91 98765 43210"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>WhatsApp</label><input id="c-wa" type="tel" placeholder="Same as mobile"></div>
+      <div class="field"><label>Email</label><input id="c-email" type="email" placeholder="optional"></div>
+    </div>
+    <div class="field"><label>Address</label><input id="c-addr" placeholder="Street, City, Pincode"></div>
+    <div class="row2">
+      <div class="field"><label>Customer type</label>
+        <select id="c-type"><option>Walk-in</option><option>Regular</option><option>VIP</option><option>Referred</option></select>
+      </div>
+      <div class="field"><label>Referred by</label><input id="c-ref" placeholder="Name or source"></div>
+    </div>
+    <div class="field"><label>Preferences / notes</label><textarea id="c-notes" placeholder="Fit preferences, fabric allergies..."></textarea></div>
+    <button class="btn-primary" onclick="goStep(2)">Next: Measurements →</button>
+  </div>
+
+  <!-- STEP 2: MEASUREMENTS -->
+  <div id="s2" style="display:none">
+    <div class="card">
+      <div class="section-title">Select garments</div>
+      <div class="chip-row">
+        <span class="chip active" onclick="this.classList.toggle('active')">Salwar Kameez</span>
+        <span class="chip" onclick="this.classList.toggle('active')">Saree Blouse</span>
+        <span class="chip" onclick="this.classList.toggle('active')">Lehenga</span>
+        <span class="chip" onclick="this.classList.toggle('active')">Kurta</span>
+        <span class="chip" onclick="this.classList.toggle('active')">Sherwani</span>
+        <span class="chip" onclick="this.classList.toggle('active')">Anarkali</span>
+        <span class="chip" onclick="this.classList.toggle('active')">Sharara</span>
+      </div>
+      <div class="unit-toggle">
+        <button class="unit-btn active" id="btn-in" onclick="setUnit('in')">Inches</button>
+        <button class="unit-btn" id="btn-cm" onclick="setUnit('cm')">CM</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">Upper body</div>
+      <div class="meas-grid">
+        <div class="mf"><label>Chest / Bust</label><div class="miw"><input type="number" id="m-chest" placeholder="0"><span class="u">in</span></div></div>
+        <div class="mf"><label>Waist</label><div class="miw"><input type="number" id="m-waist" placeholder="0"><span class="u">in</span></div></div>
+        <div class="mf"><label>Hips</label><div class="miw"><input type="number" id="m-hips" placeholder="0"><span class="u">in</span></div></div>
+        <div class="mf"><label>Shoulder</label><div class="miw"><input type="number" id="m-sho" placeholder="0"><span class="u">in</span></div></div>
+        <div class="mf"><label>Arm length</label><div class="miw"><input type="number" id="m-arm" placeholder="0"><span class="u">in</span></div></div>
+        <div class="mf"><label>Bicep</label><div class="miw"><input type="number" id="m-bicep" placeholder="0"><span class="u">in</span></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">Lengths & lower body</div>
+      <div class="meas-grid">
+        <div class="mf"><label>Kameez length</label><div class="miw"><input type="number" id="m-klen" placeholder="0"><span class="u">in</span></div></div>
+        <div class="mf"><label>Salwar length</label><div class="miw"><input type="number" id="m-slen" placeholder="0"><span class="u">in</span></div></div>
+        <div class="mf"><label>Lehenga length</label><div class="miw"><input type="number" id="m-llen" placeholder="0"><span class="u">in</span></div></div>
+        <div class="mf"><label>Inseam</label><div class="miw"><input type="number" id="m-ins" placeholder="0"><span class="u">in</span></div></div>
+        <div class="mf"><label>Ankle width</label><div class="miw"><input type="number" id="m-ank" placeholder="0"><span class="u">in</span></div></div>
+        <div class="mf"><label>Height</label><div class="miw"><input type="number" id="m-ht" placeholder="0"><span class="u">in</span></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">Blouse-specific</div>
+      <div class="meas-grid">
+        <div class="mf"><label>Blouse length</label><div class="miw"><input type="number" id="m-blen" placeholder="0"><span class="u">in</span></div></div>
+        <div class="mf"><label>Back length</label><div class="miw"><input type="number" id="m-back" placeholder="0"><span class="u">in</span></div></div>
+        <div class="mf"><label>Neck depth (F)</label><div class="miw"><input type="number" id="m-nf" placeholder="0"><span class="u">in</span></div></div>
+        <div class="mf"><label>Neck depth (B)</label><div class="miw"><input type="number" id="m-nb" placeholder="0"><span class="u">in</span></div></div>
+        <div class="mf"><label>Under bust</label><div class="miw"><input type="number" id="m-ub" placeholder="0"><span class="u">in</span></div></div>
+        <div class="mf"><label>Cap sleeve</label><div class="miw"><input type="number" id="m-cap" placeholder="0"><span class="u">in</span></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field"><label>Fitting notes</label><textarea id="m-notes" placeholder="Posture, special fitting notes..."></textarea></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-secondary" style="margin-top:0" onclick="goStep(1)">← Back</button>
+        <button class="btn-primary" style="margin-top:0" onclick="goStep(3)">Next: Order →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: ORDER -->
+  <div id="s3" style="display:none">
+    <div class="card">
+      <div class="section-title">Garment & design</div>
+      <div class="row2">
+        <div class="field"><label>Garment *</label>
+          <select id="o-garment"><option>Salwar Kameez</option><option>Saree Blouse</option><option>Lehenga</option><option>Kurta</option><option>Sherwani</option><option>Anarkali</option><option>Sharara</option><option>Patiala suit</option><option>Ghagra choli</option><option>Other</option></select>
+        </div>
+        <div class="field"><label>Occasion</label>
+          <select id="o-occ"><option>Daily wear</option><option>Wedding</option><option>Festival</option><option>Party</option><option>Office</option><option>Pooja</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Fabric by</label><select id="o-fby"><option>Customer</option><option>Shop</option></select></div>
+        <div class="field"><label>Fabric type</label>
+          <select id="o-fab"><option>Cotton</option><option>Silk</option><option>Georgette</option><option>Chiffon</option><option>Crepe</option><option>Banarasi</option><option>Chanderi</option><option>Linen</option><option>Net</option><option>Velvet</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Neckline</label>
+          <select id="o-neck"><option>Round</option><option>V-neck</option><option>Boat neck</option><option>Square</option><option>Sweetheart</option><option>Halter</option><option>High neck</option></select>
+        </div>
+        <div class="field"><label>Sleeve</label>
+          <select id="o-slv"><option>Full</option><option>3/4</option><option>Half</option><option>Cap</option><option>Sleeveless</option><option>Bell</option><option>Cold shoulder</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Work / embroidery</label>
+          <select id="o-work"><option>Plain</option><option>Embroidery</option><option>Zari work</option><option>Mirror work</option><option>Patch work</option><option>Block print</option><option>Kundan</option></select>
+        </div>
+        <div class="field"><label>Lining</label><select id="o-lin"><option>Yes</option><option>No</option></select></div>
+      </div>
+      <div class="field"><label>Design instructions</label><textarea id="o-design" placeholder="Describe the design or reference..."></textarea></div>
+    </div>
+    <div class="card">
+      <div class="section-title">Dates & priority</div>
+      <div class="row2">
+        <div class="field"><label>Trial fitting date</label><input type="date" id="o-trial"></div>
+        <div class="field"><label>Delivery date *</label><input type="date" id="o-del"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Priority</label>
+          <select id="o-pri"><option>Normal</option><option>Express (+₹200)</option><option>Urgent (+₹500)</option></select>
+        </div>
+        <div class="field"><label>Quantity</label><input type="number" id="o-qty" value="1" min="1"></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-secondary" style="margin-top:0" onclick="goStep(2)">← Back</button>
+        <button class="btn-primary" style="margin-top:0" onclick="goStep(4)">Next: Pricing →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: PRICING -->
+  <div id="s4" style="display:none">
+    <div class="card">
+      <div class="section-title">Add price items</div>
+      <div class="add-row">
+        <input id="pi-name" placeholder="Item name">
+        <input id="pi-qty" type="number" value="1" min="1" placeholder="Qty">
+        <input id="pi-rate" type="number" placeholder="₹ Rate">
+        <button class="add-btn" onclick="addItem()">+</button>
+      </div>
+      <div id="price-items"><p style="font-size:13px;color:#9ca3af;text-align:center;padding:12px 0">No items yet — add stitching charges above</p></div>
+    </div>
+    <div class="card">
+      <div class="section-title">Discount</div>
+      <div class="row2">
+        <div class="field"><label>Discount type</label>
+          <select id="disc-type" onchange="calcTotal()"><option value="none">No discount</option><option value="flat">Flat (₹)</option><option value="pct">Percentage (%)</option></select>
+        </div>
+        <div class="field"><label>Value</label><input type="number" id="disc-val" placeholder="0" oninput="calcTotal()"></div>
+      </div>
+      <div class="summary-box">
+        <div class="sr"><span>Subtotal</span><span id="p-sub">₹0</span></div>
+        <div class="sr disc" id="disc-row" style="display:none"><span id="disc-label">Discount</span><span id="p-disc">-₹0</span></div>
+        <div class="sr tot"><span>Total</span><span id="p-total">₹0</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">Payment</div>
+      <div class="row2">
+        <div class="field"><label>Advance (₹)</label><input type="number" id="p-adv" placeholder="0" oninput="calcBalance()"></div>
+        <div class="field"><label>Payment mode</label>
+          <select id="p-mode"><option>Cash</option><option>UPI / GPay</option><option>PhonePe</option><option>Bank transfer</option><option>Card</option></select>
+        </div>
+      </div>
+      <div class="summary-box">
+        <div class="sr"><span>Total</span><span id="bal-total">₹0</span></div>
+        <div class="sr disc"><span>Advance paid</span><span id="bal-adv">-₹0</span></div>
+        <div class="sr tot"><span>Balance due</span><span id="bal-due">₹0</span></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-secondary" style="margin-top:0" onclick="goStep(3)">← Back</button>
+        <button class="btn-primary" style="margin-top:0;background:#15803d" onclick="saveOrder()">✓ Save Order</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== COMMS PAGE ===== -->
+<div class="page" id="page-comm">
+  <div class="card">
+    <div class="section-title">Fill customer info</div>
+    <div class="field"><label>Customer name</label><input id="msg-name" placeholder="Customer name" oninput="renderMsgs()"></div>
+    <div class="row2">
+      <div class="field"><label>Garment</label><input id="msg-gar" placeholder="Salwar Kameez" oninput="renderMsgs()"></div>
+      <div class="field"><label>Balance (₹)</label><input type="number" id="msg-bal" placeholder="0" oninput="renderMsgs()"></div>
+    </div>
+    <div class="field"><label>Delivery date</label><input type="date" id="msg-date" oninput="renderMsgs()"></div>
+  </div>
+  <div class="wa-card">
+    <div class="wa-title"><span class="wa-title-icon">💬</span>Order confirmation</div>
+    <div class="wa-preview" id="msg-confirm"></div>
+    <button class="copy-btn" onclick="copyMsg('msg-confirm')">📋 Copy message</button>
+  </div>
+  <div class="wa-card">
+    <div class="wa-title"><span class="wa-title-icon">✅</span>Ready for pickup</div>
+    <div class="wa-preview" id="msg-ready"></div>
+    <button class="copy-btn" onclick="copyMsg('msg-ready')">📋 Copy message</button>
+  </div>
+  <div class="wa-card">
+    <div class="wa-title"><span class="wa-title-icon">📅</span>Trial fitting reminder</div>
+    <div class="wa-preview" id="msg-trial"></div>
+    <button class="copy-btn" onclick="copyMsg('msg-trial')">📋 Copy message</button>
+  </div>
+  <div class="wa-card">
+    <div class="wa-title"><span class="wa-title-icon">💰</span>Balance payment reminder</div>
+    <div class="wa-preview" id="msg-pay"></div>
+    <button class="copy-btn" onclick="copyMsg('msg-pay')">📋 Copy message</button>
+  </div>
+  <div class="wa-card">
+    <div class="wa-title"><span class="wa-title-icon">🎊</span>Festival offer</div>
+    <div class="wa-preview" id="msg-fest"></div>
+    <button class="copy-btn" onclick="copyMsg('msg-fest')">📋 Copy message</button>
+  </div>
+</div>
+
+<!-- ===== SETTINGS PAGE ===== -->
+<div class="page" id="page-settings">
+  <div class="card">
+    <div class="section-title">Shop details</div>
+    <div class="field"><label>Shop name</label><input id="set-name" placeholder="Darzi Studio" oninput="saveSettings()"></div>
+    <div class="field"><label>Owner name</label><input id="set-owner" placeholder="Your name" oninput="saveSettings()"></div>
+    <div class="field"><label>Phone</label><input id="set-phone" type="tel" placeholder="+91 98765 43210" oninput="saveSettings()"></div>
+    <div class="field"><label>Address</label><textarea id="set-addr" placeholder="Shop address" oninput="saveSettings()"></textarea></div>
+    <div class="field"><label>UPI ID</label><input id="set-upi" placeholder="yourname@upi" oninput="saveSettings()"></div>
+  </div>
+  <div class="card">
+    <div class="section-title">Data</div>
+    <button class="btn-primary" onclick="exportData()" style="margin-bottom:10px">⬇️ Export all orders (JSON)</button>
+    <button class="btn-secondary" onclick="document.getElementById('import-file').click()">⬆️ Import orders (JSON)</button>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
+    <p style="font-size:12px;color:#9ca3af;margin-top:10px;text-align:center">Data is saved on this device. Export regularly to back up.</p>
+  </div>
+  <div class="card" style="text-align:center">
+    <p style="font-size:13px;color:#9ca3af">✂️ Darzi Studio v1.0</p>
+    <p style="font-size:12px;color:#d1d5db;margin-top:4px">Built for Indian tailors</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let orders=[];
+let priceItems=[];
+let currentStep=1;
+let editOrderId=null;
+
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.getElementById('nav-'+p)&&document.getElementById('nav-'+p).classList.add('active');
+  if(p==='orders'){renderOrders();updateMetrics();}
+  if(p==='comm')renderMsgs();
+  if(p==='settings')loadSettings();
+  if(p==='new-order'){resetForm();document.getElementById('nav-new-order').classList.add('active');}
+}
+
+function goStep(n){
+  if(n===2){
+    if(!document.getElementById('c-name').value.trim()||!document.getElementById('c-phone').value.trim()){
+      showToast('Please fill name and mobile');return;
+    }
+  }
+  if(n===4&&!document.getElementById('o-del').value){showToast('Please set a delivery date');return;}
+  currentStep=n;
+  [1,2,3,4].forEach(i=>{
+    document.getElementById('s'+i).style.display=i===n?'block':'none';
+    const s=document.getElementById('step'+i);
+    s.className='step'+(i===n?' active':i<n?' done':'');
+  });
+  window.scrollTo(0,0);
+}
+
+function resetForm(){
+  currentStep=1;
+  priceItems=[];
+  editOrderId=null;
+  ['c-name','c-phone','c-wa','c-email','c-addr','c-ref','c-notes',
+   'm-chest','m-waist','m-hips','m-sho','m-arm','m-bicep',
+   'm-klen','m-slen','m-llen','m-ins','m-ank','m-ht',
+   'm-blen','m-back','m-nf','m-nb','m-ub','m-cap','m-notes',
+   'o-design','o-trial','o-del','p-adv','pi-name','pi-rate'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.value='';
+  });
+  ['o-garment','o-occ','o-fby','o-fab','o-neck','o-slv','o-work','o-lin','o-pri','p-mode','disc-type','c-type'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.selectedIndex=0;
+  });
+  document.getElementById('o-qty').value=1;
+  document.getElementById('disc-val').value='';
+  document.getElementById('p-adv').value='';
+  renderPriceItems();
+  calcTotal();
+  goStep(1);
+}
+
+function setUnit(u){
+  document.querySelectorAll('.u').forEach(el=>el.textContent=u);
+  document.getElementById('btn-in').classList.toggle('active',u==='in');
+  document.getElementById('btn-cm').classList.toggle('active',u==='cm');
+}
+
+function addItem(){
+  const name=document.getElementById('pi-name').value.trim();
+  const qty=parseInt(document.getElementById('pi-qty').value)||1;
+  const rate=parseFloat(document.getElementById('pi-rate').value)||0;
+  if(!name||!rate){showToast('Enter item name and rate');return;}
+  priceItems.push({name,qty,rate});
+  document.getElementById('pi-name').value='';
+  document.getElementById('pi-rate').value='';
+  document.getElementById('pi-qty').value=1;
+  renderPriceItems();
+}
+function removeItem(i){priceItems.splice(i,1);renderPriceItems();}
+function renderPriceItems(){
+  const el=document.getElementById('price-items');
+  if(!priceItems.length){el.innerHTML='<p style="font-size:13px;color:#9ca3af;text-align:center;padding:12px 0">No items yet — add stitching charges above</p>';calcTotal();return;}
+  el.innerHTML=priceItems.map((p,i)=>`<div class="price-item"><span class="pi-name">${p.name}<br><span class="pi-meta">×${p.qty} @ ₹${p.rate}</span></span><span class="pi-amt">₹${(p.qty*p.rate).toLocaleString()}</span><button class="rm-btn" onclick="removeItem(${i})">×</button></div>`).join('');
+  calcTotal();
+}
+function calcTotal(){
+  const sub=priceItems.reduce((a,p)=>a+p.qty*p.rate,0);
+  const dtype=document.getElementById('disc-type').value;
+  const dval=parseFloat(document.getElementById('disc-val').value)||0;
+  let disc=0;
+  if(dtype==='flat')disc=Math.min(dval,sub);
+  if(dtype==='pct')disc=Math.round(sub*dval/100);
+  const total=Math.max(0,sub-disc);
+  document.getElementById('p-sub').textContent='₹'+sub.toLocaleString();
+  document.getElementById('p-total').textContent='₹'+total.toLocaleString();
+  const dr=document.getElementById('disc-row');
+  if(disc>0){dr.style.display='flex';document.getElementById('disc-label').textContent=dtype==='pct'?`Discount (${dval}%)`:'Discount';document.getElementById('p-disc').textContent='-₹'+disc.toLocaleString();}
+  else dr.style.display='none';
+  calcBalance();
+}
+function calcBalance(){
+  const sub=priceItems.reduce((a,p)=>a+p.qty*p.rate,0);
+  const dtype=document.getElementById('disc-type').value;
+  const dval=parseFloat(document.getElementById('disc-val').value)||0;
+  let disc=0;
+  if(dtype==='flat')disc=Math.min(dval,sub);
+  if(dtype==='pct')disc=Math.round(sub*dval/100);
+  const net=Math.max(0,sub-disc);
+  const adv=parseFloat(document.getElementById('p-adv').value)||0;
+  const bal=Math.max(0,net-adv);
+  document.getElementById('bal-total').textContent='₹'+net.toLocaleString();
+  document.getElementById('bal-adv').textContent='-₹'+adv.toLocaleString();
+  document.getElementById('bal-due').textContent='₹'+bal.toLocaleString();
+}
+
+function saveOrder(){
+  const sub=priceItems.reduce((a,p)=>a+p.qty*p.rate,0);
+  const dtype=document.getElementById('disc-type').value;
+  const dval=parseFloat(document.getElementById('disc-val').value)||0;
+  let disc=0;
+  if(dtype==='flat')disc=Math.min(dval,sub);
+  if(dtype==='pct')disc=Math.round(sub*dval/100);
+  const total=Math.max(0,sub-disc);
+  const adv=parseFloat(document.getElementById('p-adv').value)||0;
+  const order={
+    id:editOrderId||Date.now().toString(),
+    createdAt:editOrderId?orders.find(o=>o.id===editOrderId)?.createdAt:new Date().toISOString(),
+    status:'Measuring',
+    customer:{
+      name:document.getElementById('c-name').value.trim(),
+      phone:document.getElementById('c-phone').value.trim(),
+      wa:document.getElementById('c-wa').value.trim(),
+      email:document.getElementById('c-email').value.trim(),
+      address:document.getElementById('c-addr').value.trim(),
+      type:document.getElementById('c-type').value,
+      ref:document.getElementById('c-ref').value.trim(),
+      notes:document.getElementById('c-notes').value.trim()
+    },
+    measurements:{
+      unit:document.getElementById('btn-in').classList.contains('active')?'in':'cm',
+      chest:document.getElementById('m-chest').value,
+      waist:document.getElementById('m-waist').value,
+      hips:document.getElementById('m-hips').value,
+      shoulder:document.getElementById('m-sho').value,
+      arm:document.getElementById('m-arm').value,
+      bicep:document.getElementById('m-bicep').value,
+      klen:document.getElementById('m-klen').value,
+      slen:document.getElementById('m-slen').value,
+      llen:document.getElementById('m-llen').value,
+      inseam:document.getElementById('m-ins').value,
+      ankle:document.getElementById('m-ank').value,
+      height:document.getElementById('m-ht').value,
+      blen:document.getElementById('m-blen').value,
+      back:document.getElementById('m-back').value,
+      neckF:document.getElementById('m-nf').value,
+      neckB:document.getElementById('m-nb').value,
+      underbust:document.getElementById('m-ub').value,
+      cap:document.getElementById('m-cap').value,
+      notes:document.getElementById('m-notes').value.trim()
+    },
+    order:{
+      garment:document.getElementById('o-garment').value,
+      occasion:document.getElementById('o-occ').value,
+      fabricBy:document.getElementById('o-fby').value,
+      fabric:document.getElementById('o-fab').value,
+      neck:document.getElementById('o-neck').value,
+      sleeve:document.getElementById('o-slv').value,
+      work:document.getElementById('o-work').value,
+      lining:document.getElementById('o-lin').value,
+      design:document.getElementById('o-design').value.trim(),
+      trial:document.getElementById('o-trial').value,
+      delivery:document.getElementById('o-del').value,
+      priority:document.getElementById('o-pri').value,
+      qty:document.getElementById('o-qty').value
+    },
+    pricing:{
+      items:[...priceItems],
+      discountType:dtype,
+      discountVal:dval,
+      subtotal:sub,
+      discount:disc,
+      total,
+      advance:adv,
+      balance:Math.max(0,total-adv),
+      paymentMode:document.getElementById('p-mode').value
+    }
+  };
+  if(editOrderId){
+    order.status=orders.find(o=>o.id===editOrderId)?.status||'Measuring';
+    orders=orders.map(o=>o.id===editOrderId?order:o);
+  } else {
+    orders.unshift(order);
+  }
+  saveToStorage();
+  showToast('Order saved! ✓');
+  setTimeout(()=>showPage('orders'),600);
+}
+
+function renderOrders(search=''){
+  const list=document.getElementById('order-list');
+  let filtered=orders.filter(o=>{
+    if(!search)return true;
+    const q=search.toLowerCase();
+    return o.customer.name.toLowerCase().includes(q)||o.order.garment.toLowerCase().includes(q)||o.customer.phone.includes(q);
+  });
+  if(!filtered.length){
+    list.innerHTML=`<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg><p>${search?'No orders match your search':'No orders yet — tap + to add one'}</p></div>`;
+    return;
+  }
+  list.innerHTML=filtered.map(o=>{
+    const ini=(o.customer.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const due=o.order.delivery?new Date(o.order.delivery).toLocaleDateString('en-IN',{day:'numeric',month:'short'}):'No date';
+    const badgeClass={Measuring:'b-meas',Stitching:'b-stitch',Ready:'b-ready',Delivered:'b-delivered'}[o.status]||'b-meas';
+    return `<div class="order-card" onclick="viewOrder('${o.id}')">
+      <div class="oa">${ini}</div>
+      <div class="oi">
+        <div class="on">${o.customer.name}</div>
+        <div class="os">${o.order.garment} · Due ${due} · ${o.pricing.balance>0?'₹'+o.pricing.balance.toLocaleString()+' due':'Paid ✓'}</div>
+      </div>
+      <span class="badge ${badgeClass}">${o.status}</span>
+    </div>`;
+  }).join('');
+}
+
+function viewOrder(id){
+  const o=orders.find(x=>x.id===id);
+  if(!o)return;
+  const ini=(o.customer.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const fmtDate=d=>d?new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}):'—';
+  const badgeClass={Measuring:'b-meas',Stitching:'b-stitch',Ready:'b-ready',Delivered:'b-delivered'}[o.status]||'b-meas';
+  document.getElementById('order-detail-content').innerHTML=`
+    <div class="order-detail-card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div class="oa" style="width:50px;height:50px;font-size:16px">${ini}</div>
+        <div>
+          <div style="font-size:18px;font-weight:700;color:#111827">${o.customer.name}</div>
+          <div style="font-size:13px;color:#6b7280">${o.customer.phone}</div>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:12px;color:#6b7280;font-weight:500">Status</label>
+        <div style="margin-top:4px">
+          <select class="status-select" onchange="updateStatus('${o.id}',this.value)">
+            <option ${o.status==='Measuring'?'selected':''}>Measuring</option>
+            <option ${o.status==='Stitching'?'selected':''}>Stitching</option>
+            <option ${o.status==='Ready'?'selected':''}>Ready</option>
+            <option ${o.status==='Delivered'?'selected':''}>Delivered</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="order-detail-card">
+      <div class="section-title">Customer</div>
+      <div class="dl"><span>Phone</span><span>${o.customer.phone||'—'}</span></div>
+      <div class="dl"><span>WhatsApp</span><span>${o.customer.wa||'—'}</span></div>
+      <div class="dl"><span>Address</span><span>${o.customer.address||'—'}</span></div>
+      <div class="dl"><span>Type</span><span>${o.customer.type}</span></div>
+      ${o.customer.notes?`<div class="dl"><span>Notes</span><span>${o.customer.notes}</span></div>`:''}
+    </div>
+    <div class="order-detail-card">
+      <div class="section-title">Order</div>
+      <div class="dl"><span>Garment</span><span>${o.order.garment}</span></div>
+      <div class="dl"><span>Occasion</span><span>${o.order.occasion}</span></div>
+      <div class="dl"><span>Fabric</span><span>${o.order.fabric} (by ${o.order.fabricBy})</span></div>
+      <div class="dl"><span>Neckline</span><span>${o.order.neck}</span></div>
+      <div class="dl"><span>Sleeve</span><span>${o.order.sleeve}</span></div>
+      <div class="dl"><span>Work</span><span>${o.order.work}</span></div>
+      <div class="dl"><span>Lining</span><span>${o.order.lining}</span></div>
+      <div class="dl"><span>Priority</span><span>${o.order.priority}</span></div>
+      <div class="dl"><span>Trial date</span><span>${fmtDate(o.order.trial)}</span></div>
+      <div class="dl"><span>Delivery date</span><span>${fmtDate(o.order.delivery)}</span></div>
+      ${o.order.design?`<div class="dl"><span>Design notes</span><span>${o.order.design}</span></div>`:''}
+    </div>
+    <div class="order-detail-card">
+      <div class="section-title">Measurements (${o.measurements.unit})</div>
+      ${[['Chest/Bust',o.measurements.chest],['Waist',o.measurements.waist],['Hips',o.measurements.hips],['Shoulder',o.measurements.shoulder],['Arm length',o.measurements.arm],['Bicep',o.measurements.bicep],['Kameez length',o.measurements.klen],['Salwar length',o.measurements.slen],['Height',o.measurements.height]].filter(([,v])=>v).map(([k,v])=>`<div class="dl"><span>${k}</span><span>${v} ${o.measurements.unit}</span></div>`).join('')}
+    </div>
+    <div class="order-detail-card">
+      <div class="section-title">Pricing</div>
+      ${o.pricing.items.map(p=>`<div class="dl"><span>${p.name} ×${p.qty}</span><span>₹${(p.qty*p.rate).toLocaleString()}</span></div>`).join('')}
+      ${o.pricing.discount>0?`<div class="dl" style="color:#059669"><span>Discount</span><span>-₹${o.pricing.discount.toLocaleString()}</span></div>`:''}
+      <div class="dl" style="font-weight:700"><span>Total</span><span>₹${o.pricing.total.toLocaleString()}</span></div>
+      <div class="dl" style="color:#059669"><span>Advance paid</span><span>₹${o.pricing.advance.toLocaleString()}</span></div>
+      <div class="dl" style="font-weight:700;color:${o.pricing.balance>0?'#dc2626':'#059669'}"><span>Balance due</span><span>₹${o.pricing.balance.toLocaleString()}</span></div>
+      <div class="dl"><span>Payment mode</span><span>${o.pricing.paymentMode}</span></div>
+    </div>
+    <button class="btn-secondary" onclick="deleteOrder('${o.id}')" style="color:#dc2626;border-color:#dc2626;margin-top:4px">🗑 Delete order</button>
+  `;
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-order-detail').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function updateStatus(id,status){
+  orders=orders.map(o=>o.id===id?{...o,status}:o);
+  saveToStorage();
+  updateMetrics();
+  showToast('Status updated: '+status);
+}
+
+function deleteOrder(id){
+  if(!confirm('Delete this order?'))return;
+  orders=orders.filter(o=>o.id!==id);
+  saveToStorage();
+  showToast('Order deleted');
+  showPage('orders');
+}
+
+function updateMetrics(){
+  document.getElementById('m-total').textContent=orders.length;
+  document.getElementById('m-active').textContent=orders.filter(o=>o.status==='Measuring'||o.status==='Stitching').length;
+  document.getElementById('m-ready').textContent=orders.filter(o=>o.status==='Ready').length;
+}
+
+function fmtDate(val){
+  if(!val)return'[delivery date]';
+  return new Date(val).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+}
+function renderMsgs(){
+  const name=document.getElementById('msg-name').value.trim()||'[Customer name]';
+  const gar=document.getElementById('msg-gar').value.trim()||'[garment]';
+  const date=fmtDate(document.getElementById('msg-date').value);
+  const bal=document.getElementById('msg-bal').value||'0';
+  const shop=localStorage.getItem('ds-shopname')||'Darzi Studio';
+  document.getElementById('msg-confirm').textContent=`Namaste ${name} ji! 🙏\n\nYour order for *${gar}* has been confirmed.\n📅 Delivery date: ${date}\n\nWe will notify you when it is ready.\n\nThank you for choosing ${shop}! ✂️`;
+  document.getElementById('msg-ready').textContent=`Namaste ${name} ji! 🙏\n\nYour *${gar}* is ready for pickup! 🎉\n\n💰 Balance due: ₹${bal}\n\nPlease visit our shop at your convenience.\n\n✂️ ${shop}`;
+  document.getElementById('msg-trial').textContent=`Namaste ${name} ji! 🙏\n\nReminder: your *trial fitting* for ${gar} is on ${date}.\n\nPlease arrive 10 minutes early. To reschedule, reply to this message.\n\n✂️ ${shop}`;
+  document.getElementById('msg-pay').textContent=`Namaste ${name} ji! 🙏\n\nA balance of *₹${bal}* is due for your ${gar}.\n\nYou can pay via Cash, UPI, or GPay when collecting.\n\nThank you! ✂️ ${shop}`;
+  document.getElementById('msg-fest').textContent=`🎊 Festive Season Special!\n\nNamaste ${name} ji! 🙏\n\nEnjoy *10% off* all stitching this season!\n\n🪡 Book early — slots fill fast!\n📞 Call or WhatsApp us to reserve.\n\n✂️ ${shop} — Stitch with Love`;
+}
+function copyMsg(id){
+  const text=document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(()=>showToast('Copied to clipboard! ✓'));
+}
+
+function saveSettings(){
+  localStorage.setItem('ds-shopname',document.getElementById('set-name').value);
+  localStorage.setItem('ds-owner',document.getElementById('set-owner').value);
+  localStorage.setItem('ds-phone',document.getElementById('set-phone').value);
+  localStorage.setItem('ds-addr',document.getElementById('set-addr').value);
+  localStorage.setItem('ds-upi',document.getElementById('set-upi').value);
+}
+function loadSettings(){
+  document.getElementById('set-name').value=localStorage.getItem('ds-shopname')||'';
+  document.getElementById('set-owner').value=localStorage.getItem('ds-owner')||'';
+  document.getElementById('set-phone').value=localStorage.getItem('ds-phone')||'';
+  document.getElementById('set-addr').value=localStorage.getItem('ds-addr')||'';
+  document.getElementById('set-upi').value=localStorage.getItem('ds-upi')||'';
+}
+
+function saveToStorage(){localStorage.setItem('ds-orders',JSON.stringify(orders));}
+function loadFromStorage(){
+  try{orders=JSON.parse(localStorage.getItem('ds-orders'))||[];}catch(e){orders=[];}
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify({orders,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='darzi-studio-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  showToast('Backup downloaded ✓');
+}
+function importData(input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(data.orders){orders=[...data.orders,...orders];saveToStorage();showToast('Imported '+data.orders.length+' orders ✓');renderOrders();updateMetrics();}
+    }catch(err){showToast('Invalid file');}
+  };
+  reader.readAsText(file);
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+loadFromStorage();
+renderOrders();
+updateMetrics();
+renderMsgs();
+</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(()=>{});}</script>
+</body>
+</html>
