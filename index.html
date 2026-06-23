@@ -1361,6 +1361,18 @@ body {
     </div>
   </div>
   <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
+  <div class="sec-label">App</div>
+  <div class="card" style="margin-bottom:14px">
+    <div onclick="checkForUpdates()" id="update-row" style="display:flex;align-items:center;padding:13px 16px;gap:14px;cursor:pointer">
+      <div class="settings-icon" style="background:#EDE9FE">🔄</div>
+      <div style="flex:1">
+        <div style="font-size:15px;color:var(--ink)">Check for updates</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:2px" id="update-sub">Clear cache &amp; pull latest version</div>
+      </div>
+      <svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M1 1l6 5-6 5" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+
   <div class="about-card">
     <div class="about-brand">DY-Threads</div>
     <div class="about-thread"></div>
@@ -1395,6 +1407,37 @@ body {
 <script>
 let orders = [], priceItems = [], currentStep = 1;
 
+
+
+/* ── CHECK FOR UPDATES / CLEAR CACHE ── */
+function checkForUpdates() {
+  const sub = document.getElementById('update-sub');
+  const row = document.getElementById('update-row');
+  if (sub) sub.textContent = 'Clearing cache…';
+  if (row) row.style.opacity = '0.5';
+
+  if (!('serviceWorker' in navigator)) {
+    showToast('Reloading…');
+    setTimeout(() => location.reload(true), 400);
+    return;
+  }
+
+  // Unregister all service workers, then clear all caches
+  Promise.all([
+    navigator.serviceWorker.getRegistrations().then(regs =>
+      Promise.all(regs.map(r => r.unregister()))
+    ),
+    caches.keys().then(keys =>
+      Promise.all(keys.map(k => caches.delete(k)))
+    )
+  ]).then(() => {
+    showToast('Cache cleared — reloading ✓');
+    setTimeout(() => location.reload(true), 800);
+  }).catch(() => {
+    showToast('Reloading…');
+    setTimeout(() => location.reload(true), 400);
+  });
+}
 
 /* ── SPLASH ── */
 (function() {
