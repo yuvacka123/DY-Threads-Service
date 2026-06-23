@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="DY-Threads">
 <meta name="theme-color" content="#0A0A0A">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="manifest" href="/DY-Threads-Service/manifest.json">
+<link rel="apple-touch-icon" href="/DY-Threads-Service/icons/icon-192.png">
 <title>DY-Threads</title>
 <style>
 :root {
@@ -1335,7 +1335,7 @@ function showToast(msg) {
 
 /* ── INIT ── */
 loadFromStorage(); renderOrders(); updateMetrics(); renderMsgs();
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/DY-Threads-Service/sw.js').catch(()=>{});
 </script>
 </body>
 </html>
