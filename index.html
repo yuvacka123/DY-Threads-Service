@@ -1236,7 +1236,7 @@ body {
       <div class="form-row"><label>Delivery date</label><button class="date-display empty" id="o-del-btn" onclick="openDatePicker('o-del', 'Delivery Date')">Select date</button>
           <input type="hidden" id="o-del" value=""></div>
       <div class="form-row"><label>Priority</label>
-        <select id="o-pri"><option>Normal</option><option>Express (+₹200)</option><option>Urgent (+₹500)</option></select>
+        <select id="o-pri"><option>Normal</option><option>Express (+$200)</option><option>Urgent (+$500)</option></select>
       </div>
       <div class="form-row"><label>Quantity</label><input type="number" id="o-qty" value="1" min="1" style="text-align:right"></div>
     </div>
@@ -1253,7 +1253,7 @@ body {
       <div class="add-item-row">
         <input class="add-field" id="pi-name" placeholder="Item (e.g. Stitching)">
         <input class="add-field narrow" id="pi-qty" type="number" value="1" min="1" placeholder="Qty">
-        <input class="add-field narrow" id="pi-rate" type="number" placeholder="₹">
+        <input class="add-field narrow" id="pi-rate" type="number" placeholder="$">
         <button class="add-btn" onclick="addItem()">+</button>
       </div>
       <div id="price-items">
@@ -1264,30 +1264,30 @@ body {
     <div class="sec-label">Discount</div>
     <div class="card">
       <div class="form-row"><label>Type</label>
-        <select id="disc-type" onchange="calcTotal()"><option value="none">None</option><option value="flat">Flat (₹)</option><option value="pct">Percentage (%)</option></select>
+        <select id="disc-type" onchange="calcTotal()"><option value="none">None</option><option value="flat">Flat ($)</option><option value="pct">Percentage (%)</option></select>
       </div>
       <div class="form-row"><label>Value</label><input type="number" id="disc-val" placeholder="0" oninput="calcTotal()" style="text-align:right"></div>
     </div>
 
     <div class="summary-card">
-      <div class="sum-row"><span class="sum-label">Subtotal</span><span class="sum-val" id="p-sub">₹0</span></div>
-      <div class="sum-row" id="disc-row" style="display:none"><span class="sum-label" id="disc-label">Discount</span><span class="sum-val discount" id="p-disc">–₹0</span></div>
+      <div class="sum-row"><span class="sum-label">Subtotal</span><span class="sum-val" id="p-sub">$0</span></div>
+      <div class="sum-row" id="disc-row" style="display:none"><span class="sum-label" id="disc-label">Discount</span><span class="sum-val discount" id="p-disc">–$0</span></div>
       <div class="sum-divider"></div>
-      <div class="sum-row total"><span class="sum-label">Total</span><span class="sum-val" id="p-total">₹0</span></div>
+      <div class="sum-row total"><span class="sum-label">Total</span><span class="sum-val" id="p-total">$0</span></div>
     </div>
 
     <div class="sec-label">Payment</div>
     <div class="card">
-      <div class="form-row"><label>Advance (₹)</label><input type="number" id="p-adv" placeholder="0" oninput="calcBalance()" style="text-align:right"></div>
+      <div class="form-row"><label>Advance ($)</label><input type="number" id="p-adv" placeholder="0" oninput="calcBalance()" style="text-align:right"></div>
       <div class="form-row"><label>Mode</label>
-        <select id="p-mode"><option>Cash</option><option>UPI / GPay</option><option>PhonePe</option><option>Bank transfer</option><option>Card</option></select>
+        <select id="p-mode"><option>Cash</option><option>Card / Online</option><option>PhonePe</option><option>Bank transfer</option><option>Card</option></select>
       </div>
     </div>
     <div class="summary-card">
-      <div class="sum-row"><span class="sum-label">Total</span><span class="sum-val" id="bal-total">₹0</span></div>
-      <div class="sum-row"><span class="sum-label">Advance paid</span><span class="sum-val discount" id="bal-adv">–₹0</span></div>
+      <div class="sum-row"><span class="sum-label">Total</span><span class="sum-val" id="bal-total">$0</span></div>
+      <div class="sum-row"><span class="sum-label">Advance paid</span><span class="sum-val discount" id="bal-adv">–$0</span></div>
       <div class="sum-divider"></div>
-      <div class="sum-row total"><span class="sum-label">Balance due</span><span class="sum-val" id="bal-due">₹0</span></div>
+      <div class="sum-row total"><span class="sum-label">Balance due</span><span class="sum-val" id="bal-due">$0</span></div>
     </div>
 
     <div class="btn-row" style="margin-top:8px">
@@ -1303,7 +1303,7 @@ body {
   <div class="card">
     <div class="form-row"><label>Customer</label><input id="msg-name" placeholder="Name" oninput="renderMsgs()"></div>
     <div class="form-row"><label>Garment</label><input id="msg-gar" placeholder="Salwar Kameez" oninput="renderMsgs()"></div>
-    <div class="form-row"><label>Balance (₹)</label><input type="number" id="msg-bal" placeholder="0" oninput="renderMsgs()" style="text-align:right"></div>
+    <div class="form-row"><label>Balance ($)</label><input type="number" id="msg-bal" placeholder="0" oninput="renderMsgs()" style="text-align:right"></div>
     <div class="form-row"><label>Delivery date</label><button class="date-display empty" id="msg-date-btn" onclick="openDatePicker('msg-date', 'Delivery Date')">Select date</button>
           <input type="hidden" id="msg-date" value=""></div>
   </div>
@@ -1550,7 +1550,7 @@ function goStep(n) {
 }
 
 function resetForm() {
-  currentStep = 1; priceItems = []; garmentPhotos = [];
+  currentStep = 1; priceItems = []; editingOrderId = null; garmentPhotos = [];
   const ids = ['c-name','c-phone','c-wa','c-email','c-addr','c-ref','c-notes',
     'm-chest','m-waist','m-hips','m-sho','m-arm','m-bicep',
     'm-klen','m-slen','m-llen','m-ins','m-ank','m-ht',
@@ -1809,8 +1809,8 @@ function renderPriceItems() {
   }
   el.innerHTML = priceItems.map((p,i) => `
     <div class="price-row">
-      <div><div class="price-name">${p.name}</div><div class="price-meta">×${p.qty} @ ₹${p.rate.toLocaleString()}</div></div>
-      <div class="price-amt">₹${(p.qty*p.rate).toLocaleString()}</div>
+      <div><div class="price-name">${p.name}</div><div class="price-meta">×${p.qty} @ $${p.rate.toLocaleString()}</div></div>
+      <div class="price-amt">$${(p.qty*p.rate).toLocaleString()}</div>
       <button class="rm-btn" onclick="removeItem(${i})">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
@@ -1825,13 +1825,13 @@ function calcTotal() {
   if (dtype === 'flat') disc = Math.min(dval, sub);
   if (dtype === 'pct') disc = Math.round(sub * dval / 100);
   const total = Math.max(0, sub - disc);
-  document.getElementById('p-sub').textContent = '₹' + sub.toLocaleString();
-  document.getElementById('p-total').textContent = '₹' + total.toLocaleString();
+  document.getElementById('p-sub').textContent = '$' + sub.toLocaleString();
+  document.getElementById('p-total').textContent = '$' + total.toLocaleString();
   const dr = document.getElementById('disc-row');
   if (disc > 0) {
     dr.style.display = 'flex';
     document.getElementById('disc-label').textContent = dtype === 'pct' ? `Discount (${dval}%)` : 'Discount';
-    document.getElementById('p-disc').textContent = '–₹' + disc.toLocaleString();
+    document.getElementById('p-disc').textContent = '–$' + disc.toLocaleString();
   } else { dr.style.display = 'none'; }
   calcBalance();
 }
@@ -1845,12 +1845,89 @@ function calcBalance() {
   const net = Math.max(0, sub - disc);
   const adv = parseFloat(document.getElementById('p-adv').value)||0;
   const bal = Math.max(0, net - adv);
-  document.getElementById('bal-total').textContent = '₹' + net.toLocaleString();
-  document.getElementById('bal-adv').textContent = '–₹' + adv.toLocaleString();
-  document.getElementById('bal-due').textContent = '₹' + bal.toLocaleString();
+  document.getElementById('bal-total').textContent = '$' + net.toLocaleString();
+  document.getElementById('bal-adv').textContent = '–$' + adv.toLocaleString();
+  document.getElementById('bal-due').textContent = '$' + bal.toLocaleString();
 }
 
 /* ── SAVE ORDER ── */
+
+/* ── EDIT ORDER ── */
+let editingOrderId = null;
+
+function editOrder(id) {
+  const o = orders.find(x => x.id === id);
+  if (!o) return;
+  editingOrderId = id;
+
+  // Populate Step 1: Customer
+  const setVal = (elId, val) => { const el = document.getElementById(elId); if (el) el.value = val || ''; };
+  setVal('c-name', o.customer.name);
+  setVal('c-phone', o.customer.phone);
+  setVal('c-wa', o.customer.wa);
+  setVal('c-email', o.customer.email);
+  setVal('c-addr', o.customer.address);
+  setVal('c-ref', o.customer.ref);
+  setVal('c-notes', o.customer.notes);
+  const ctype = document.getElementById('c-type');
+  if (ctype) ctype.value = o.customer.type || 'Walk-in';
+
+  // Populate Step 2: Measurements
+  if (o.measurements && o.measurements.garments) {
+    garmentBlocks = o.measurements.garments.map(g => ({
+      garmentType: g.garmentType,
+      blockId: 'gb_' + Date.now() + Math.random(),
+      fields: { ...g.fields },
+      collapsed: false
+    }));
+    setVal('m-notes', o.measurements.notes);
+  }
+
+  // Populate Step 3: Order details
+  const setSel = (elId, val) => { const el = document.getElementById(elId); if (el) el.value = val || el.options[0].value; };
+  setSel('o-garment', o.order.garment);
+  setSel('o-occ', o.order.occasion);
+  setSel('o-fby', o.order.fabricBy);
+  setSel('o-fab', o.order.fabric);
+  setSel('o-neck', o.order.neck);
+  setSel('o-slv', o.order.sleeve);
+  setSel('o-work', o.order.work);
+  setSel('o-lin', o.order.lining);
+  setSel('o-pri', o.order.priority);
+  setVal('o-design', o.order.design);
+  setVal('o-qty', o.order.qty);
+
+  // Date fields
+  setVal('o-trial', o.order.trial);
+  setVal('o-del', o.order.delivery);
+  // Update date button displays
+  ['o-trial', 'o-del'].forEach(id => {
+    const val = document.getElementById(id) ? document.getElementById(id).value : '';
+    const btn = document.getElementById(id + '-btn');
+    if (btn && val) {
+      btn.textContent = new Date(val + 'T00:00:00').toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'});
+      btn.classList.remove('empty');
+    }
+  });
+
+  // Populate Step 4: Pricing
+  priceItems = (o.pricing.items || []).map(p => ({ ...p }));
+  setVal('p-adv', o.pricing.advance);
+  setSel('disc-type', o.pricing.discountType || 'none');
+  setVal('disc-val', o.pricing.discountVal || '');
+  setSel('p-mode', o.pricing.paymentMode);
+
+  // Navigate to new order form
+  showPage('new-order');
+  renderGarmentBlocks();
+  renderPriceItems();
+  calcTotal();
+
+  // Show "Editing" indicator in the save button
+  const saveBtn = document.querySelector('#s4 .btn-gold');
+  if (saveBtn) saveBtn.textContent = 'Update order';
+}
+
 function saveOrder() {
   const sub = priceItems.reduce((a,p) => a + p.qty*p.rate, 0);
   const dtype = document.getElementById('disc-type').value;
@@ -1869,9 +1946,23 @@ function saveOrder() {
     order: { garment:document.getElementById('o-garment').value, occasion:document.getElementById('o-occ').value, fabricBy:document.getElementById('o-fby').value, fabric:document.getElementById('o-fab').value, neck:document.getElementById('o-neck').value, sleeve:document.getElementById('o-slv').value, work:document.getElementById('o-work').value, lining:document.getElementById('o-lin').value, design:v('o-design'), photos:[...garmentPhotos], trial:v('o-trial'), delivery:v('o-del'), priority:document.getElementById('o-pri').value, qty:v('o-qty') },
     pricing: { items:[...priceItems], discountType:dtype, discountVal:dval, subtotal:sub, discount:disc, total, advance:adv, balance:Math.max(0,total-adv), paymentMode:document.getElementById('p-mode').value }
   };
-  orders.unshift(order);
+  if (editingOrderId) {
+    // Preserve original status and createdAt
+    const existing = orders.find(o => o.id === editingOrderId);
+    order.id = editingOrderId;
+    order.createdAt = existing ? existing.createdAt : order.createdAt;
+    order.status = existing ? existing.status : 'Measuring';
+    orders = orders.map(o => o.id === editingOrderId ? order : o);
+    editingOrderId = null;
+    showToast('Order updated ✓');
+  } else {
+    orders.unshift(order);
+    showToast('Order saved ✓');
+  }
+  // Reset save button text
+  const saveBtn = document.querySelector('#s4 .btn-gold');
+  if (saveBtn) saveBtn.textContent = 'Save order';
   saveToStorage();
-  showToast('Order saved ✓');
   setTimeout(() => showPage('orders'), 600);
 }
 
@@ -1891,7 +1982,7 @@ function renderOrders(search = '') {
     const ini = (o.customer.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     const due = o.order.delivery ? new Date(o.order.delivery).toLocaleDateString('en-IN',{day:'numeric',month:'short'}) : 'No date';
     const pillClass = {Measuring:'pill-meas',Stitching:'pill-stitch',Ready:'pill-ready',Delivered:'pill-delivered'}[o.status]||'pill-meas';
-    const bal = o.pricing.balance > 0 ? `₹${o.pricing.balance.toLocaleString()} due` : 'Paid ✓';
+    const bal = o.pricing.balance > 0 ? `$${o.pricing.balance.toLocaleString()} due` : 'Paid ✓';
     return `<div class="order-card" onclick="viewOrder('${o.id}')">
       <div class="avatar">${ini}</div>
       <div class="order-info">
@@ -1929,7 +2020,7 @@ function viewOrder(id) {
     return rows ? `<div class="sec-label">${g.garmentType} (${measUnit})</div><div class="card">${rows}</div>` : '';
   }).join('');
   const mrows = mrowsAll;
-  const prows = o.pricing.items.map(p=>`<div class="dl"><span class="dl-key">${p.name} ×${p.qty}</span><span class="dl-val">₹${(p.qty*p.rate).toLocaleString()}</span></div>`).join('');
+  const prows = o.pricing.items.map(p=>`<div class="dl"><span class="dl-key">${p.name} ×${p.qty}</span><span class="dl-val">$${(p.qty*p.rate).toLocaleString()}</span></div>`).join('');
   document.getElementById('order-detail-content').innerHTML = `
     <div class="detail-header">
       <div class="avatar-lg">${ini}</div>
@@ -1973,10 +2064,10 @@ function viewOrder(id) {
     <div class="sec-label">Pricing</div>
     <div class="card">
       ${prows}
-      ${o.pricing.discount>0?`<div class="dl"><span class="dl-key">Discount</span><span class="dl-val green">–₹${o.pricing.discount.toLocaleString()}</span></div>`:''}
-      <div class="dl"><span class="dl-key" style="font-weight:600;color:var(--ink)">Total</span><span class="dl-val" style="font-size:16px">₹${o.pricing.total.toLocaleString()}</span></div>
-      <div class="dl"><span class="dl-key">Advance paid</span><span class="dl-val green">₹${o.pricing.advance.toLocaleString()}</span></div>
-      <div class="dl"><span class="dl-key" style="font-weight:600;color:var(--ink)">Balance due</span><span class="dl-val ${o.pricing.balance>0?'red':'green'}" style="font-size:16px">₹${o.pricing.balance.toLocaleString()}</span></div>
+      ${o.pricing.discount>0?`<div class="dl"><span class="dl-key">Discount</span><span class="dl-val green">–$${o.pricing.discount.toLocaleString()}</span></div>`:''}
+      <div class="dl"><span class="dl-key" style="font-weight:600;color:var(--ink)">Total</span><span class="dl-val" style="font-size:16px">$${o.pricing.total.toLocaleString()}</span></div>
+      <div class="dl"><span class="dl-key">Advance paid</span><span class="dl-val green">$${o.pricing.advance.toLocaleString()}</span></div>
+      <div class="dl"><span class="dl-key" style="font-weight:600;color:var(--ink)">Balance due</span><span class="dl-val ${o.pricing.balance>0?'red':'green'}" style="font-size:16px">$${o.pricing.balance.toLocaleString()}</span></div>
       <div class="dl"><span class="dl-key">Payment mode</span><span class="dl-val">${o.pricing.paymentMode}</span></div>
     </div>
     <div class="sec-label">Customer</div>
@@ -1985,7 +2076,10 @@ function viewOrder(id) {
       <div class="dl"><span class="dl-key">Type</span><span class="dl-val">${o.customer.type}</span></div>
       ${o.customer.notes?`<div class="dl"><span class="dl-key">Notes</span><span class="dl-val">${o.customer.notes}</span></div>`:''}
     </div>
-    <button class="btn btn-danger" style="margin-top:4px" onclick="deleteOrder('${o.id}')">Delete order</button>
+    <div class="btn-row" style="margin-top:4px">
+      <button class="btn btn-gold" style="flex:1" onclick="editOrder('${o.id}')">Edit order</button>
+      <button class="btn btn-danger" style="flex:1" onclick="deleteOrder('${o.id}')">Delete</button>
+    </div>
     <div style="height:8px"></div>`;
   document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
@@ -2020,9 +2114,9 @@ function renderMsgs() {
   const bal = document.getElementById('msg-bal').value||'0';
   const shop = localStorage.getItem('ds-shopname')||'DY-Threads';
   document.getElementById('msg-confirm').textContent = `Namaste ${name} ji! 🙏\n\nYour order for *${gar}* has been confirmed with ${shop}.\n📅 Delivery date: ${date}\n\nWe'll notify you once it's ready.\n\nThank you for choosing us! ✂️`;
-  document.getElementById('msg-ready').textContent = `Namaste ${name} ji! 🙏\n\nGreat news! Your *${gar}* is ready for pickup. 🎉\n\n💰 Balance due: ₹${bal}\n\nPlease visit us at your convenience.\n\n✂️ ${shop}`;
+  document.getElementById('msg-ready').textContent = `Namaste ${name} ji! 🙏\n\nGreat news! Your *${gar}* is ready for pickup. 🎉\n\n💰 Balance due: $${bal}\n\nPlease visit us at your convenience.\n\n✂️ ${shop}`;
   document.getElementById('msg-trial').textContent = `Namaste ${name} ji! 🙏\n\nThis is a reminder for your *trial fitting* for your ${gar} on ${date}.\n\nPlease arrive 10 minutes early. To reschedule, reply to this message.\n\n✂️ ${shop}`;
-  document.getElementById('msg-pay').textContent = `Namaste ${name} ji! 🙏\n\nKindly note that a balance of *₹${bal}* is pending for your ${gar}.\n\nYou can pay via Cash, UPI, or GPay at the time of collection.\n\nThank you! ✂️ ${shop}`;
+  document.getElementById('msg-pay').textContent = `Namaste ${name} ji! 🙏\n\nKindly note that a balance of *$${bal}* is pending for your ${gar}.\n\nYou can pay via Cash, Card, or Bank transfer at the time of collection.\n\nThank you! ✂️ ${shop}`;
   document.getElementById('msg-fest').textContent = `🎊 Festive Season Special!\n\nNamaste ${name} ji! 🙏\n\nCelebrate in style — enjoy *10% off* all stitching this season at ${shop}!\n\n🪡 Limited slots available. Book now!\n📞 Call or WhatsApp to reserve.\n\n✂️ ${shop} — Crafted with care`;
 }
 function copyMsg(id) {
