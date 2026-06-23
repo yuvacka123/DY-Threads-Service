@@ -1047,16 +1047,12 @@ body {
 
   <!-- Step 2: Measurements -->
   <div id="s2" style="display:none">
-    <div class="sec-label">Garments</div>
+    <div class="sec-label">Select garment type</div>
     <div class="card">
-      <div class="chip-row">
-        <span class="chip active" onclick="this.classList.toggle('active')">Salwar Kameez</span>
-        <span class="chip" onclick="this.classList.toggle('active')">Saree Blouse</span>
-        <span class="chip" onclick="this.classList.toggle('active')">Lehenga</span>
-        <span class="chip" onclick="this.classList.toggle('active')">Kurta</span>
-        <span class="chip" onclick="this.classList.toggle('active')">Sherwani</span>
-        <span class="chip" onclick="this.classList.toggle('active')">Anarkali</span>
-        <span class="chip" onclick="this.classList.toggle('active')">Sharara</span>
+      <div class="chip-row" id="garment-chips">
+        <span class="chip active" onclick="selectGarmentChip(this,'Blouse')">Blouse</span>
+        <span class="chip" onclick="selectGarmentChip(this,'Sudi')">Sudi</span>
+        <span class="chip" onclick="selectGarmentChip(this,'Pre-Pleating')">Pre-Pleating</span>
       </div>
       <div style="padding:0 14px 14px;display:flex;justify-content:flex-end">
         <div class="unit-toggle">
@@ -1066,43 +1062,14 @@ body {
       </div>
     </div>
 
-    <div class="sec-label">Upper body</div>
-    <div class="card">
-      <div class="meas-grid">
-        <div class="meas-cell"><label>Chest / Bust</label><div class="meas-input-wrap"><input type="number" id="m-chest" placeholder="—"><span class="meas-unit u">in</span></div></div>
-        <div class="meas-cell"><label>Waist</label><div class="meas-input-wrap"><input type="number" id="m-waist" placeholder="—"><span class="meas-unit u">in</span></div></div>
-        <div class="meas-cell"><label>Hips</label><div class="meas-input-wrap"><input type="number" id="m-hips" placeholder="—"><span class="meas-unit u">in</span></div></div>
-        <div class="meas-cell"><label>Shoulder</label><div class="meas-input-wrap"><input type="number" id="m-sho" placeholder="—"><span class="meas-unit u">in</span></div></div>
-        <div class="meas-cell"><label>Arm length</label><div class="meas-input-wrap"><input type="number" id="m-arm" placeholder="—"><span class="meas-unit u">in</span></div></div>
-        <div class="meas-cell"><label>Bicep</label><div class="meas-input-wrap"><input type="number" id="m-bicep" placeholder="—"><span class="meas-unit u">in</span></div></div>
-      </div>
-    </div>
+    <!-- Dynamic measurement fields rendered here -->
+    <div id="meas-dynamic"></div>
 
-    <div class="sec-label">Lengths & lower body</div>
     <div class="card">
-      <div class="meas-grid">
-        <div class="meas-cell"><label>Kameez length</label><div class="meas-input-wrap"><input type="number" id="m-klen" placeholder="—"><span class="meas-unit u">in</span></div></div>
-        <div class="meas-cell"><label>Salwar length</label><div class="meas-input-wrap"><input type="number" id="m-slen" placeholder="—"><span class="meas-unit u">in</span></div></div>
-        <div class="meas-cell"><label>Lehenga length</label><div class="meas-input-wrap"><input type="number" id="m-llen" placeholder="—"><span class="meas-unit u">in</span></div></div>
-        <div class="meas-cell"><label>Inseam</label><div class="meas-input-wrap"><input type="number" id="m-ins" placeholder="—"><span class="meas-unit u">in</span></div></div>
-        <div class="meas-cell"><label>Ankle width</label><div class="meas-input-wrap"><input type="number" id="m-ank" placeholder="—"><span class="meas-unit u">in</span></div></div>
-        <div class="meas-cell"><label>Height</label><div class="meas-input-wrap"><input type="number" id="m-ht" placeholder="—"><span class="meas-unit u">in</span></div></div>
+      <div class="form-row" style="align-items:flex-start;padding-top:14px">
+        <label style="padding-top:2px">Notes</label>
+        <textarea id="m-notes" placeholder="Posture, special fitting notes…"></textarea>
       </div>
-    </div>
-
-    <div class="sec-label">Blouse</div>
-    <div class="card">
-      <div class="meas-grid">
-        <div class="meas-cell"><label>Blouse length</label><div class="meas-input-wrap"><input type="number" id="m-blen" placeholder="—"><span class="meas-unit u">in</span></div></div>
-        <div class="meas-cell"><label>Back length</label><div class="meas-input-wrap"><input type="number" id="m-back" placeholder="—"><span class="meas-unit u">in</span></div></div>
-        <div class="meas-cell"><label>Neck depth (F)</label><div class="meas-input-wrap"><input type="number" id="m-nf" placeholder="—"><span class="meas-unit u">in</span></div></div>
-        <div class="meas-cell"><label>Neck depth (B)</label><div class="meas-input-wrap"><input type="number" id="m-nb" placeholder="—"><span class="meas-unit u">in</span></div></div>
-        <div class="meas-cell"><label>Under bust</label><div class="meas-input-wrap"><input type="number" id="m-ub" placeholder="—"><span class="meas-unit u">in</span></div></div>
-        <div class="meas-cell"><label>Cap sleeve</label><div class="meas-input-wrap"><input type="number" id="m-cap" placeholder="—"><span class="meas-unit u">in</span></div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="form-row" style="align-items:flex-start;padding-top:14px"><label style="padding-top:2px">Notes</label><textarea id="m-notes" placeholder="Posture, special fitting notes…"></textarea></div>
     </div>
 
     <div class="btn-row" style="margin-top:8px">
@@ -1492,6 +1459,8 @@ function resetForm() {
   document.getElementById('o-qty').value = 1;
   renderPriceItems(); calcTotal(); goStep(1);
   renderPhotoGrid();
+  // Reset measurement fields
+  resetMeasFields();
   // Reset date buttons
   ['o-trial','o-del'].forEach(id => {
     const btn = document.getElementById(id + '-btn');
@@ -1509,6 +1478,116 @@ function setUnit(u) {
   document.getElementById('btn-in').classList.toggle('active', u === 'in');
   document.getElementById('btn-cm').classList.toggle('active', u === 'cm');
 }
+
+/* ── GARMENT-SPECIFIC MEASUREMENTS ── */
+const GARMENT_FIELDS = {
+  'Blouse': [
+    { id: 'bl-fulllen',    label: 'Full Length',    type: 'number' },
+    { id: 'bl-neckf',      label: 'Neck (F)',        type: 'number' },
+    { id: 'bl-neckb',      label: 'Neck (B)',        type: 'number' },
+    { id: 'bl-shoulder',   label: 'Shoulder',        type: 'number' },
+    { id: 'bl-upperchest', label: 'Upper Chest',     type: 'number' },
+    { id: 'bl-midchest',   label: 'Middle Chest',    type: 'number' },
+    { id: 'bl-underbust',  label: 'Under Bust',      type: 'number' },
+    { id: 'bl-armhole',    label: 'Armhole',         type: 'number' },
+    { id: 'bl-sleevelen',  label: 'Sleeve Length',   type: 'number' },
+    { id: 'bl-sleeveopen', label: 'Sleeve Open',     type: 'number' },
+    { id: 'bl-sleevedesign', label: 'Sleeve Design', type: 'text'   },
+    { id: 'bl-neckdesign', label: 'Neck Design',     type: 'text'   },
+  ],
+  'Sudi': [
+    { id: 'su-toplen',     label: 'Top Length',      type: 'number' },
+    { id: 'su-neckf',      label: 'Neck (F)',        type: 'number' },
+    { id: 'su-neckb',      label: 'Neck (B)',        type: 'number' },
+    { id: 'su-shoulder',   label: 'Shoulder',        type: 'number' },
+    { id: 'su-sideopenlen',label: 'Side Open Length',type: 'number' },
+    { id: 'su-armhole',    label: 'Armhole',         type: 'number' },
+    { id: 'su-sleevelen',  label: 'Sleeve Length',   type: 'number' },
+    { id: 'su-sleeveopen', label: 'Sleeve Open',     type: 'number' },
+  ],
+  'Pre-Pleating': [
+    { id: 'pp-backlen',    label: 'Back Length',     type: 'number' },
+    { id: 'pp-shoulderknee', label: 'Shoulder to Knee', type: 'number' },
+    { id: 'pp-width',      label: 'Width',           type: 'number' },
+    { id: 'pp-pleats',     label: 'No. of Pleats',   type: 'number' },
+    { id: 'pp-hipsize',    label: 'Hip Size',        type: 'number' },
+  ],
+};
+
+let selectedGarment = 'Blouse';
+
+function selectGarmentChip(el, garment) {
+  document.querySelectorAll('#garment-chips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  selectedGarment = garment;
+  renderMeasFields(garment);
+}
+
+function renderMeasFields(garment) {
+  const fields = GARMENT_FIELDS[garment] || [];
+  const unit = document.getElementById('btn-in') && document.getElementById('btn-in').classList.contains('active') ? 'in' : 'cm';
+
+  // Split into number fields (grid) and text fields (full-width rows)
+  const numFields  = fields.filter(f => f.type === 'number');
+  const textFields = fields.filter(f => f.type === 'text');
+
+  // Build grid cells for numeric
+  const gridCells = numFields.map((f, i) => {
+    // Fix last-child border for odd count
+    return `<div class="meas-cell"><label>${f.label}</label>
+      <div class="meas-input-wrap">
+        <input type="number" id="${f.id}" placeholder="—" inputmode="decimal">
+        <span class="meas-unit u">${unit}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Build text rows
+  const textRows = textFields.map(f => `
+    <div class="form-row">
+      <label>${f.label}</label>
+      <input type="text" id="${f.id}" placeholder="e.g. Round, V-neck…">
+    </div>`).join('');
+
+  const container = document.getElementById('meas-dynamic');
+  container.innerHTML = `
+    <div class="sec-label">${garment} measurements</div>
+    <div class="card">
+      <div class="meas-grid" id="meas-num-grid">${gridCells}</div>
+      ${textRows ? `<div id="meas-text-rows">${textRows}</div>` : ''}
+    </div>`;
+}
+
+function getMeasurements() {
+  const garment = selectedGarment;
+  const fields = GARMENT_FIELDS[garment] || [];
+  const unit = document.getElementById('btn-in').classList.contains('active') ? 'in' : 'cm';
+  const data = { garmentType: garment, unit };
+  fields.forEach(f => {
+    const el = document.getElementById(f.id);
+    if (el) data[f.id] = el.value;
+  });
+  data.notes = (document.getElementById('m-notes') || {}).value || '';
+  return data;
+}
+
+function resetMeasFields() {
+  const fields = Object.values(GARMENT_FIELDS).flat();
+  fields.forEach(f => {
+    const el = document.getElementById(f.id);
+    if (el) el.value = '';
+  });
+  const notes = document.getElementById('m-notes');
+  if (notes) notes.value = '';
+  // Reset to first chip
+  document.querySelectorAll('#garment-chips .chip').forEach((c, i) => {
+    c.classList.toggle('active', i === 0);
+  });
+  selectedGarment = 'Blouse';
+  renderMeasFields('Blouse');
+}
+
+
 
 /* ── PRICING ── */
 function addItem() {
@@ -1586,7 +1665,7 @@ function saveOrder() {
     createdAt: new Date().toISOString(),
     status: 'Measuring',
     customer: { name:v('c-name'), phone:v('c-phone'), wa:v('c-wa'), email:v('c-email'), address:v('c-addr'), type:document.getElementById('c-type').value, ref:v('c-ref'), notes:v('c-notes') },
-    measurements: { unit: document.getElementById('btn-in').classList.contains('active')?'in':'cm', chest:v('m-chest'), waist:v('m-waist'), hips:v('m-hips'), shoulder:v('m-sho'), arm:v('m-arm'), bicep:v('m-bicep'), klen:v('m-klen'), slen:v('m-slen'), llen:v('m-llen'), inseam:v('m-ins'), ankle:v('m-ank'), height:v('m-ht'), blen:v('m-blen'), back:v('m-back'), neckF:v('m-nf'), neckB:v('m-nb'), underbust:v('m-ub'), cap:v('m-cap'), notes:v('m-notes') },
+    measurements: getMeasurements(),
     order: { garment:document.getElementById('o-garment').value, occasion:document.getElementById('o-occ').value, fabricBy:document.getElementById('o-fby').value, fabric:document.getElementById('o-fab').value, neck:document.getElementById('o-neck').value, sleeve:document.getElementById('o-slv').value, work:document.getElementById('o-work').value, lining:document.getElementById('o-lin').value, design:v('o-design'), photos:[...garmentPhotos], trial:v('o-trial'), delivery:v('o-del'), priority:document.getElementById('o-pri').value, qty:v('o-qty') },
     pricing: { items:[...priceItems], discountType:dtype, discountVal:dval, subtotal:sub, discount:disc, total, advance:adv, balance:Math.max(0,total-adv), paymentMode:document.getElementById('p-mode').value }
   };
@@ -1632,7 +1711,22 @@ function viewOrder(id) {
   const o = orders.find(x => x.id === id); if (!o) return;
   const ini = (o.customer.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
   const fd = d => d ? new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : '—';
-  const mrows = [['Chest / Bust',o.measurements.chest],['Waist',o.measurements.waist],['Hips',o.measurements.hips],['Shoulder',o.measurements.shoulder],['Arm length',o.measurements.arm],['Height',o.measurements.height]].filter(([,val])=>val).map(([k,val])=>`<div class="dl"><span class="dl-key">${k}</span><span class="dl-val">${val} ${o.measurements.unit}</span></div>`).join('');
+  // Build measurement rows from saved dynamic fields
+  const measUnit = o.measurements.unit || 'in';
+  const measGarment = o.measurements.garmentType || '';
+  const SKIP_KEYS = new Set(['unit','garmentType','notes']);
+  // Get field labels from GARMENT_FIELDS config
+  const fieldDefs = (typeof GARMENT_FIELDS !== 'undefined' && GARMENT_FIELDS[measGarment]) || [];
+  const labelMap = {};
+  fieldDefs.forEach(f => { labelMap[f.id] = { label: f.label, type: f.type }; });
+  const mrows = Object.entries(o.measurements)
+    .filter(([k, val]) => !SKIP_KEYS.has(k) && val && val !== '')
+    .map(([k, val]) => {
+      const def = labelMap[k];
+      const label = def ? def.label : k;
+      const unit  = (def && def.type === 'text') ? '' : ' ' + measUnit;
+      return `<div class="dl"><span class="dl-key">${label}</span><span class="dl-val">${val}${unit}</span></div>`;
+    }).join('');
   const prows = o.pricing.items.map(p=>`<div class="dl"><span class="dl-key">${p.name} ×${p.qty}</span><span class="dl-val">₹${(p.qty*p.rate).toLocaleString()}</span></div>`).join('');
   document.getElementById('order-detail-content').innerHTML = `
     <div class="detail-header">
@@ -1673,7 +1767,7 @@ function viewOrder(id) {
         ${o.order.photos.map((src,i)=>`<div class="detail-photo-thumb" onclick="openLightbox('${src}')"><img src="${src}" alt="Photo ${i+1}"></div>`).join('')}
       </div>
     </div>` : ''}
-    </div>${mrows?`<div class="sec-label">Measurements (${o.measurements.unit})</div><div class="card">${mrows}</div>`:''}
+    </div>${mrows?`<div class="sec-label">${measGarment} Measurements (${measUnit})</div><div class="card">${mrows}</div>`:''}
     <div class="sec-label">Pricing</div>
     <div class="card">
       ${prows}
@@ -1777,6 +1871,7 @@ function showToast(msg) {
 
 /* ── INIT ── */
 loadFromStorage(); renderOrders(); updateMetrics(); renderMsgs();
+renderMeasFields('Blouse');
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/DY-Threads-Service/sw.js').catch(()=>{});
 </script>
 </body>
