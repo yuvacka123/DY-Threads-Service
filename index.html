@@ -685,6 +685,102 @@ body {
 .about-brand { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: -.3px; }
 .about-thread { height: 1.5px; background: var(--gold); margin: 8px auto; width: 48px; opacity: .7; }
 .about-ver { font-size: 12px; color: rgba(255,255,255,.35); margin-top: 6px; }
+
+/* ── GARMENT PHOTOS ── */
+.photo-section { padding: 14px; }
+.photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.photo-thumb {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg2);
+  cursor: pointer;
+}
+.photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-thumb .rm-photo {
+  position: absolute;
+  top: 5px; right: 5px;
+  width: 22px; height: 22px;
+  background: rgba(0,0,0,.55);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1;
+  padding: 0;
+}
+.photo-add-row { display: flex; gap: 8px; }
+.photo-add-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 10px;
+  background: var(--bg2);
+  border: 1.5px dashed var(--sep);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink3);
+  font-family: inherit;
+  transition: background .15s, border-color .15s;
+}
+.photo-add-btn:active { background: var(--gold-light); border-color: var(--gold); color: var(--gold); }
+.photo-add-btn svg { width: 22px; height: 22px; }
+.photo-empty {
+  text-align: center;
+  padding: 20px;
+  color: var(--ink3);
+  font-size: 13px;
+}
+
+/* ── LIGHTBOX ── */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.92);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.lightbox.open { display: flex; }
+.lightbox img {
+  max-width: 100%;
+  max-height: 85vh;
+  border-radius: 12px;
+  object-fit: contain;
+}
+.lightbox-close {
+  position: absolute;
+  top: 54px; right: 20px;
+  background: rgba(255,255,255,.15);
+  border: none;
+  color: white;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: inherit;
+}
+.detail-photo-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; padding: 14px; }
+.detail-photo-thumb {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.detail-photo-thumb:active { opacity: .8; }
+.detail-photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 </style>
 </head>
 <body>
@@ -878,6 +974,28 @@ body {
       <div class="form-row"><label>Lining</label><select id="o-lin"><option>Yes</option><option>No</option></select></div>
       <div class="form-row" style="align-items:flex-start;padding-top:14px"><label style="padding-top:2px">Design notes</label><textarea id="o-design" placeholder="Describe design or reference…"></textarea></div>
     </div>
+
+    <div class="sec-label">Garment photos</div>
+    <div class="card">
+      <div class="photo-section">
+        <div class="photo-grid" id="photo-grid">
+          <div class="photo-empty" id="photo-empty" style="grid-column:1/-1">No photos yet</div>
+        </div>
+        <div class="photo-add-row">
+          <button class="photo-add-btn" onclick="document.getElementById('cam-input').click()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Camera
+          </button>
+          <button class="photo-add-btn" onclick="document.getElementById('gal-input').click()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Gallery
+          </button>
+        </div>
+        <input type="file" id="cam-input" accept="image/*" capture="environment" style="display:none" onchange="addPhotos(this)">
+        <input type="file" id="gal-input" accept="image/*" multiple style="display:none" onchange="addPhotos(this)">
+      </div>
+    </div>
+
     <div class="sec-label">Dates</div>
     <div class="card">
       <div class="form-row"><label>Trial fitting</label><input type="date" id="o-trial"></div>
@@ -1014,10 +1132,80 @@ body {
   </div>
 </div>
 
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="Garment photo">
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 let orders = [], priceItems = [], currentStep = 1;
+let garmentPhotos = [];
+
+function addPhotos(input) {
+  const files = Array.from(input.files);
+  if (!files.length) return;
+  let loaded = 0;
+  files.forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    // Compress before storing
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX = 800;
+        let w = img.width, h = img.height;
+        if (w > MAX || h > MAX) {
+          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+          else { w = Math.round(w * MAX / h); h = MAX; }
+        }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        garmentPhotos.push(canvas.toDataURL('image/jpeg', 0.75));
+        loaded++;
+        if (loaded === files.length) renderPhotoGrid();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function removePhoto(i) {
+  garmentPhotos.splice(i, 1);
+  renderPhotoGrid();
+}
+
+function renderPhotoGrid() {
+  const grid = document.getElementById('photo-grid');
+  if (!grid) return;
+  const empty = document.getElementById('photo-empty');
+  if (!garmentPhotos.length) {
+    grid.innerHTML = '<div class="photo-empty" id="photo-empty" style="grid-column:1/-1">No photos yet</div>';
+    return;
+  }
+  grid.innerHTML = garmentPhotos.map((src, i) => `
+    <div class="photo-thumb">
+      <img src="${src}" alt="Garment ${i+1}" onclick="openLightbox('${src}')">
+      <button class="rm-photo" onclick="event.stopPropagation();removePhoto(${i})">✕</button>
+    </div>`).join('');
+}
+
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lightbox-img').src = '';
+}
+
+
 
 /* ── NAVIGATION ── */
 function showPage(p) {
@@ -1053,7 +1241,7 @@ function goStep(n) {
 }
 
 function resetForm() {
-  currentStep = 1; priceItems = [];
+  currentStep = 1; priceItems = []; garmentPhotos = [];
   const ids = ['c-name','c-phone','c-wa','c-email','c-addr','c-ref','c-notes',
     'm-chest','m-waist','m-hips','m-sho','m-arm','m-bicep',
     'm-klen','m-slen','m-llen','m-ins','m-ank','m-ht',
@@ -1064,6 +1252,7 @@ function resetForm() {
     .forEach(id => { const el = document.getElementById(id); if (el) el.selectedIndex = 0; });
   document.getElementById('o-qty').value = 1;
   renderPriceItems(); calcTotal(); goStep(1);
+  renderPhotoGrid();
 }
 
 function v(id) { return (document.getElementById(id)?.value || '').trim(); }
@@ -1152,7 +1341,7 @@ function saveOrder() {
     status: 'Measuring',
     customer: { name:v('c-name'), phone:v('c-phone'), wa:v('c-wa'), email:v('c-email'), address:v('c-addr'), type:document.getElementById('c-type').value, ref:v('c-ref'), notes:v('c-notes') },
     measurements: { unit: document.getElementById('btn-in').classList.contains('active')?'in':'cm', chest:v('m-chest'), waist:v('m-waist'), hips:v('m-hips'), shoulder:v('m-sho'), arm:v('m-arm'), bicep:v('m-bicep'), klen:v('m-klen'), slen:v('m-slen'), llen:v('m-llen'), inseam:v('m-ins'), ankle:v('m-ank'), height:v('m-ht'), blen:v('m-blen'), back:v('m-back'), neckF:v('m-nf'), neckB:v('m-nb'), underbust:v('m-ub'), cap:v('m-cap'), notes:v('m-notes') },
-    order: { garment:document.getElementById('o-garment').value, occasion:document.getElementById('o-occ').value, fabricBy:document.getElementById('o-fby').value, fabric:document.getElementById('o-fab').value, neck:document.getElementById('o-neck').value, sleeve:document.getElementById('o-slv').value, work:document.getElementById('o-work').value, lining:document.getElementById('o-lin').value, design:v('o-design'), trial:v('o-trial'), delivery:v('o-del'), priority:document.getElementById('o-pri').value, qty:v('o-qty') },
+    order: { garment:document.getElementById('o-garment').value, occasion:document.getElementById('o-occ').value, fabricBy:document.getElementById('o-fby').value, fabric:document.getElementById('o-fab').value, neck:document.getElementById('o-neck').value, sleeve:document.getElementById('o-slv').value, work:document.getElementById('o-work').value, lining:document.getElementById('o-lin').value, design:v('o-design'), photos:[...garmentPhotos], trial:v('o-trial'), delivery:v('o-del'), priority:document.getElementById('o-pri').value, qty:v('o-qty') },
     pricing: { items:[...priceItems], discountType:dtype, discountVal:dval, subtotal:sub, discount:disc, total, advance:adv, balance:Math.max(0,total-adv), paymentMode:document.getElementById('p-mode').value }
   };
   orders.unshift(order);
@@ -1231,7 +1420,14 @@ function viewOrder(id) {
       <div class="dl"><span class="dl-key">Delivery</span><span class="dl-val gold">${fd(o.order.delivery)}</span></div>
       ${o.order.design?`<div class="dl"><span class="dl-key">Design notes</span><span class="dl-val">${o.order.design}</span></div>`:''}
     </div>
-    ${mrows?`<div class="sec-label">Measurements (${o.measurements.unit})</div><div class="card">${mrows}</div>`:''}
+    ${o.order.photos && o.order.photos.length ? `
+    <div class="sec-label">Garment photos</div>
+    <div class="card">
+      <div class="detail-photo-grid">
+        ${o.order.photos.map((src,i)=>`<div class="detail-photo-thumb" onclick="openLightbox('${src}')"><img src="${src}" alt="Photo ${i+1}"></div>`).join('')}
+      </div>
+    </div>` : ''}
+    </div>${mrows?`<div class="sec-label">Measurements (${o.measurements.unit})</div><div class="card">${mrows}</div>`:''}
     <div class="sec-label">Pricing</div>
     <div class="card">
       ${prows}
