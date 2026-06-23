@@ -689,6 +689,104 @@ body {
 .about-ver { font-size: 12px; color: rgba(255,255,255,.35); margin-top: 6px; }
 
 
+
+/* ── GARMENT BLOCKS ── */
+.garment-block {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.garment-block-header {
+  display: flex;
+  align-items: center;
+  padding: 13px 16px;
+  border-bottom: 0.5px solid var(--sep);
+  gap: 10px;
+}
+.garment-block-title {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.garment-block-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--gold-light);
+  color: var(--gold);
+}
+.garment-block-actions {
+  display: flex;
+  gap: 4px;
+}
+.gb-btn {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: var(--bg2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink3);
+  font-size: 15px;
+  transition: background .15s, color .15s;
+}
+.gb-btn:active { background: var(--sep); }
+.gb-btn.danger:active { background: #FFF0F0; color: var(--danger); }
+.garment-block-body { padding: 0; }
+.garment-block-body.collapsed { display: none; }
+.gb-meas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.gb-cell {
+  padding: 12px 14px;
+  border-bottom: 0.5px solid var(--sep);
+  border-right: 0.5px solid var(--sep);
+}
+.gb-cell:nth-child(even) { border-right: none; }
+.gb-cell.full-width { grid-column: 1 / -1; border-right: none; }
+.gb-cell label { font-size: 11px; color: var(--ink3); font-weight: 500; display: block; margin-bottom: 4px; letter-spacing: .2px; }
+.gb-input-wrap { display: flex; align-items: baseline; gap: 4px; }
+.gb-input-wrap input[type=number],
+.gb-input-wrap input[type=text] {
+  flex: 1; border: none; background: transparent;
+  font-size: 17px; font-weight: 600; color: var(--ink);
+  font-family: inherit; outline: none; min-width: 0; width: 100%;
+}
+.gb-input-wrap input::placeholder { color: var(--sep); font-weight: 400; font-size: 17px; }
+.gb-input-wrap input:disabled { color: var(--ink3); font-weight: 500; font-size: 15px; background: transparent; }
+.gb-unit { font-size: 12px; color: var(--ink3); font-weight: 500; }
+.gb-text-input {
+  width: 100%; border: none; background: transparent;
+  font-size: 15px; color: var(--ink2);
+  font-family: inherit; outline: none; text-align: right;
+}
+.gb-text-input:disabled { color: var(--ink3); }
+.edit-mode-bar {
+  display: none;
+  padding: 10px 16px;
+  background: var(--gold-light);
+  border-top: 0.5px solid #fed7aa;
+  align-items: center;
+  justify-content: space-between;
+}
+.edit-mode-bar.visible { display: flex; }
+.edit-save-btn {
+  background: var(--gold); color: white; border: none;
+  padding: 7px 18px; border-radius: 8px; font-size: 13px;
+  font-weight: 600; cursor: pointer; font-family: inherit;
+}
+.edit-cancel-btn {
+  background: transparent; color: var(--ink3); border: none;
+  padding: 7px 12px; font-size: 13px; cursor: pointer; font-family: inherit;
+}
+
 /* ── CUSTOM DATE PICKER (fixes Safari PWA standalone mode) ── */
 .date-modal-overlay {
   display: none;
@@ -1047,25 +1145,30 @@ body {
 
   <!-- Step 2: Measurements -->
   <div id="s2" style="display:none">
-    <div class="sec-label">Select garment type</div>
-    <div class="card">
-      <div class="chip-row" id="garment-chips">
-        <span class="chip active" onclick="selectGarmentChip(this,'Blouse')">Blouse</span>
-        <span class="chip" onclick="selectGarmentChip(this,'Sudi')">Sudi</span>
-        <span class="chip" onclick="selectGarmentChip(this,'Pre-Pleating')">Pre-Pleating</span>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div class="sec-label" style="margin:0">Measurements</div>
+      <div class="unit-toggle">
+        <button class="unit-btn active" id="btn-in" onclick="setUnit('in')">in</button>
+        <button class="unit-btn" id="btn-cm" onclick="setUnit('cm')">cm</button>
       </div>
-      <div style="padding:0 14px 14px;display:flex;justify-content:flex-end">
-        <div class="unit-toggle">
-          <button class="unit-btn active" id="btn-in" onclick="setUnit('in')">in</button>
-          <button class="unit-btn" id="btn-cm" onclick="setUnit('cm')">cm</button>
+    </div>
+
+    <!-- List of added garment measurement blocks -->
+    <div id="garment-blocks"></div>
+
+    <!-- Add garment button -->
+    <div class="card" style="margin-bottom:14px">
+      <div style="padding:12px 14px 10px">
+        <div style="font-size:12px;font-weight:600;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">Add garment</div>
+        <div class="chip-row" style="padding:0;margin-bottom:0">
+          <span class="chip" onclick="addGarmentBlock('Blouse')">+ Blouse</span>
+          <span class="chip" onclick="addGarmentBlock('Sudi')">+ Sudi</span>
+          <span class="chip" onclick="addGarmentBlock('Pre-Pleating')">+ Pre-Pleating</span>
         </div>
       </div>
     </div>
 
-    <!-- Dynamic measurement fields rendered here -->
-    <div id="meas-dynamic"></div>
-
-    <div class="card">
+    <div class="card" style="margin-bottom:14px">
       <div class="form-row" style="align-items:flex-start;padding-top:14px">
         <label style="padding-top:2px">Notes</label>
         <textarea id="m-notes" placeholder="Posture, special fitting notes…"></textarea>
@@ -1482,110 +1585,207 @@ function setUnit(u) {
 /* ── GARMENT-SPECIFIC MEASUREMENTS ── */
 const GARMENT_FIELDS = {
   'Blouse': [
-    { id: 'bl-fulllen',    label: 'Full Length',    type: 'number' },
-    { id: 'bl-neckf',      label: 'Neck (F)',        type: 'number' },
-    { id: 'bl-neckb',      label: 'Neck (B)',        type: 'number' },
-    { id: 'bl-shoulder',   label: 'Shoulder',        type: 'number' },
-    { id: 'bl-upperchest', label: 'Upper Chest',     type: 'number' },
-    { id: 'bl-midchest',   label: 'Middle Chest',    type: 'number' },
-    { id: 'bl-underbust',  label: 'Under Bust',      type: 'number' },
-    { id: 'bl-armhole',    label: 'Armhole',         type: 'number' },
-    { id: 'bl-sleevelen',  label: 'Sleeve Length',   type: 'number' },
-    { id: 'bl-sleeveopen', label: 'Sleeve Open',     type: 'number' },
-    { id: 'bl-sleevedesign', label: 'Sleeve Design', type: 'text'   },
-    { id: 'bl-neckdesign', label: 'Neck Design',     type: 'text'   },
+    { id: 'bl-fulllen',      label: 'Full Length',      type: 'number' },
+    { id: 'bl-neckf',        label: 'Neck (F)',          type: 'number' },
+    { id: 'bl-neckb',        label: 'Neck (B)',          type: 'number' },
+    { id: 'bl-shoulder',     label: 'Shoulder',          type: 'number' },
+    { id: 'bl-upperchest',   label: 'Upper Chest',       type: 'number' },
+    { id: 'bl-midchest',     label: 'Middle Chest',      type: 'number' },
+    { id: 'bl-underbust',    label: 'Under Bust',        type: 'number' },
+    { id: 'bl-armhole',      label: 'Armhole',           type: 'number' },
+    { id: 'bl-sleevelen',    label: 'Sleeve Length',     type: 'number' },
+    { id: 'bl-sleeveopen',   label: 'Sleeve Open',       type: 'number' },
+    { id: 'bl-sleevedesign', label: 'Sleeve Design',     type: 'text'   },
+    { id: 'bl-neckdesign',   label: 'Neck Design',       type: 'text'   },
   ],
   'Sudi': [
-    { id: 'su-toplen',     label: 'Top Length',      type: 'number' },
-    { id: 'su-neckf',      label: 'Neck (F)',        type: 'number' },
-    { id: 'su-neckb',      label: 'Neck (B)',        type: 'number' },
-    { id: 'su-shoulder',   label: 'Shoulder',        type: 'number' },
-    { id: 'su-sideopenlen',label: 'Side Open Length',type: 'number' },
-    { id: 'su-armhole',    label: 'Armhole',         type: 'number' },
-    { id: 'su-sleevelen',  label: 'Sleeve Length',   type: 'number' },
-    { id: 'su-sleeveopen', label: 'Sleeve Open',     type: 'number' },
+    { id: 'su-toplen',       label: 'Top Length',        type: 'number' },
+    { id: 'su-neckf',        label: 'Neck (F)',          type: 'number' },
+    { id: 'su-neckb',        label: 'Neck (B)',          type: 'number' },
+    { id: 'su-shoulder',     label: 'Shoulder',          type: 'number' },
+    { id: 'su-sideopenlen',  label: 'Side Open Length',  type: 'number' },
+    { id: 'su-armhole',      label: 'Armhole',           type: 'number' },
+    { id: 'su-sleevelen',    label: 'Sleeve Length',     type: 'number' },
+    { id: 'su-sleeveopen',   label: 'Sleeve Open',       type: 'number' },
   ],
   'Pre-Pleating': [
-    { id: 'pp-backlen',    label: 'Back Length',     type: 'number' },
-    { id: 'pp-shoulderknee', label: 'Shoulder to Knee', type: 'number' },
-    { id: 'pp-width',      label: 'Width',           type: 'number' },
-    { id: 'pp-pleats',     label: 'No. of Pleats',   type: 'number' },
-    { id: 'pp-hipsize',    label: 'Hip Size',        type: 'number' },
+    { id: 'pp-backlen',      label: 'Back Length',       type: 'number' },
+    { id: 'pp-shoulderknee', label: 'Shoulder to Knee',  type: 'number' },
+    { id: 'pp-width',        label: 'Width',             type: 'number' },
+    { id: 'pp-pleats',       label: 'No. of Pleats',     type: 'number' },
+    { id: 'pp-hipsize',      label: 'Hip Size',          type: 'number' },
   ],
 };
 
-let selectedGarment = 'Blouse';
+/* garmentBlocks = [ { garmentType, blockId, fields: {fieldId: value}, collapsed } ] */
+let garmentBlocks = [];
+let gbEditingId   = null;
 
-function selectGarmentChip(el, garment) {
-  document.querySelectorAll('#garment-chips .chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  selectedGarment = garment;
-  renderMeasFields(garment);
+function addGarmentBlock(garmentType) {
+  const blockId = 'gb_' + Date.now();
+  garmentBlocks.push({ garmentType, blockId, fields: {}, collapsed: false });
+  renderGarmentBlocks();
+  // Scroll to new block
+  setTimeout(() => {
+    const el = document.getElementById(blockId);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 80);
 }
 
-function renderMeasFields(garment) {
-  const fields = GARMENT_FIELDS[garment] || [];
+function removeGarmentBlock(blockId) {
+  garmentBlocks = garmentBlocks.filter(b => b.blockId !== blockId);
+  renderGarmentBlocks();
+}
+
+function toggleGarmentBlock(blockId) {
+  const b = garmentBlocks.find(b => b.blockId === blockId);
+  if (b) { b.collapsed = !b.collapsed; renderGarmentBlocks(); }
+}
+
+function editGarmentBlock(blockId) {
+  gbEditingId = blockId;
+  renderGarmentBlocks();
+  setTimeout(() => {
+    const el = document.getElementById('gbedit_' + blockId);
+    if (el) { const inp = el.querySelector('input'); if(inp) inp.focus(); }
+  }, 80);
+}
+
+function saveGarmentBlockEdit(blockId) {
+  const b = garmentBlocks.find(b => b.blockId === blockId);
+  if (!b) return;
+  const fields = GARMENT_FIELDS[b.garmentType] || [];
+  fields.forEach(f => {
+    const el = document.getElementById('gbedit_' + blockId + '_' + f.id);
+    if (el) b.fields[f.id] = el.value;
+  });
+  gbEditingId = null;
+  renderGarmentBlocks();
+}
+
+function cancelGarmentBlockEdit() {
+  gbEditingId = null;
+  renderGarmentBlocks();
+}
+
+function renderGarmentBlocks() {
   const unit = document.getElementById('btn-in') && document.getElementById('btn-in').classList.contains('active') ? 'in' : 'cm';
+  const container = document.getElementById('garment-blocks');
+  if (!container) return;
 
-  // Split into number fields (grid) and text fields (full-width rows)
-  const numFields  = fields.filter(f => f.type === 'number');
-  const textFields = fields.filter(f => f.type === 'text');
+  if (!garmentBlocks.length) {
+    container.innerHTML = `<div style="text-align:center;padding:20px 16px;color:var(--ink3);font-size:13px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:14px">No garments added yet — tap a type below</div>`;
+    return;
+  }
 
-  // Build grid cells for numeric
-  const gridCells = numFields.map((f, i) => {
-    // Fix last-child border for odd count
-    return `<div class="meas-cell"><label>${f.label}</label>
-      <div class="meas-input-wrap">
-        <input type="number" id="${f.id}" placeholder="—" inputmode="decimal">
-        <span class="meas-unit u">${unit}</span>
+  container.innerHTML = garmentBlocks.map((b, idx) => {
+    const fields   = GARMENT_FIELDS[b.garmentType] || [];
+    const isEditing = gbEditingId === b.blockId;
+    const numFields  = fields.filter(f => f.type === 'number');
+    const textFields = fields.filter(f => f.type === 'text');
+
+    // Count filled
+    const filledCount = fields.filter(f => b.fields[f.id] && b.fields[f.id] !== '').length;
+    const badge = filledCount > 0 ? `${filledCount}/${fields.length} filled` : 'Empty';
+
+    // Grid cells
+    const gridCells = numFields.map(f => {
+      const val = b.fields[f.id] || '';
+      if (isEditing) {
+        return `<div class="gb-cell">
+          <label>${f.label}</label>
+          <div class="gb-input-wrap">
+            <input type="number" id="gbedit_${b.blockId}_${f.id}" value="${val}" placeholder="—" inputmode="decimal">
+            <span class="gb-unit u">${unit}</span>
+          </div>
+        </div>`;
+      } else {
+        return `<div class="gb-cell">
+          <label>${f.label}</label>
+          <div class="gb-input-wrap">
+            <input type="number" value="${val}" placeholder="—" disabled>
+            <span class="gb-unit u">${unit}</span>
+          </div>
+        </div>`;
+      }
+    }).join('');
+
+    // Text rows
+    const textRows = textFields.map(f => {
+      const val = b.fields[f.id] || '';
+      if (isEditing) {
+        return `<div class="gb-cell full-width" style="display:flex;align-items:center;border-bottom:0.5px solid var(--sep)">
+          <label style="margin-bottom:0;width:120px;flex-shrink:0">${f.label}</label>
+          <input class="gb-text-input" type="text" id="gbedit_${b.blockId}_${f.id}" value="${val}" placeholder="e.g. Round neck">
+        </div>`;
+      } else {
+        return `<div class="gb-cell full-width" style="display:flex;align-items:center;border-bottom:0.5px solid var(--sep)">
+          <label style="margin-bottom:0;width:120px;flex-shrink:0">${f.label}</label>
+          <input class="gb-text-input" type="text" value="${val}" placeholder="—" disabled>
+        </div>`;
+      }
+    }).join('');
+
+    const editBar = isEditing ? `
+      <div class="edit-mode-bar visible">
+        <span style="font-size:13px;color:var(--gold);font-weight:500">Editing ${b.garmentType}</span>
+        <div style="display:flex;gap:8px">
+          <button class="edit-cancel-btn" onclick="cancelGarmentBlockEdit()">Cancel</button>
+          <button class="edit-save-btn" onclick="saveGarmentBlockEdit('${b.blockId}')">Save</button>
+        </div>
+      </div>` : '';
+
+    return `<div class="garment-block" id="${b.blockId}">
+      <div class="garment-block-header">
+        <div>
+          <div class="garment-block-title">${b.garmentType}</div>
+        </div>
+        <span class="garment-block-badge">${badge}</span>
+        <div class="garment-block-actions">
+          <button class="gb-btn" onclick="editGarmentBlock('${b.blockId}')" title="Edit">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="gb-btn" onclick="toggleGarmentBlock('${b.blockId}')" title="${b.collapsed ? 'Expand' : 'Collapse'}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="${b.collapsed ? 'M6 9l6 6 6-6' : 'M6 15l6-6 6 6'}"/></svg>
+          </button>
+          <button class="gb-btn danger" onclick="removeGarmentBlock('${b.blockId}')" title="Remove">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="garment-block-body ${b.collapsed && !isEditing ? 'collapsed' : ''}" id="gbedit_${b.blockId}">
+        <div class="gb-meas-grid">${gridCells}${textRows}</div>
+        ${editBar}
       </div>
     </div>`;
   }).join('');
-
-  // Build text rows
-  const textRows = textFields.map(f => `
-    <div class="form-row">
-      <label>${f.label}</label>
-      <input type="text" id="${f.id}" placeholder="e.g. Round, V-neck…">
-    </div>`).join('');
-
-  const container = document.getElementById('meas-dynamic');
-  container.innerHTML = `
-    <div class="sec-label">${garment} measurements</div>
-    <div class="card">
-      <div class="meas-grid" id="meas-num-grid">${gridCells}</div>
-      ${textRows ? `<div id="meas-text-rows">${textRows}</div>` : ''}
-    </div>`;
 }
 
-function getMeasurements() {
-  const garment = selectedGarment;
-  const fields = GARMENT_FIELDS[garment] || [];
+function setUnit(u) {
+  document.querySelectorAll('.u').forEach(el => el.textContent = u);
+  document.getElementById('btn-in').classList.toggle('active', u === 'in');
+  document.getElementById('btn-cm').classList.toggle('active', u === 'cm');
+  renderGarmentBlocks();
+}
+
+function getAllMeasurements() {
   const unit = document.getElementById('btn-in').classList.contains('active') ? 'in' : 'cm';
-  const data = { garmentType: garment, unit };
-  fields.forEach(f => {
-    const el = document.getElementById(f.id);
-    if (el) data[f.id] = el.value;
-  });
-  data.notes = (document.getElementById('m-notes') || {}).value || '';
-  return data;
+  return {
+    unit,
+    notes: (document.getElementById('m-notes') || {}).value || '',
+    garments: garmentBlocks.map(b => ({ garmentType: b.garmentType, fields: {...b.fields} }))
+  };
 }
 
 function resetMeasFields() {
-  const fields = Object.values(GARMENT_FIELDS).flat();
-  fields.forEach(f => {
-    const el = document.getElementById(f.id);
-    if (el) el.value = '';
-  });
+  garmentBlocks = [];
+  gbEditingId = null;
   const notes = document.getElementById('m-notes');
   if (notes) notes.value = '';
-  // Reset to first chip
-  document.querySelectorAll('#garment-chips .chip').forEach((c, i) => {
-    c.classList.toggle('active', i === 0);
-  });
-  selectedGarment = 'Blouse';
-  renderMeasFields('Blouse');
+  renderGarmentBlocks();
 }
+
+
 
 
 
@@ -1665,7 +1865,7 @@ function saveOrder() {
     createdAt: new Date().toISOString(),
     status: 'Measuring',
     customer: { name:v('c-name'), phone:v('c-phone'), wa:v('c-wa'), email:v('c-email'), address:v('c-addr'), type:document.getElementById('c-type').value, ref:v('c-ref'), notes:v('c-notes') },
-    measurements: getMeasurements(),
+    measurements: getAllMeasurements(),
     order: { garment:document.getElementById('o-garment').value, occasion:document.getElementById('o-occ').value, fabricBy:document.getElementById('o-fby').value, fabric:document.getElementById('o-fab').value, neck:document.getElementById('o-neck').value, sleeve:document.getElementById('o-slv').value, work:document.getElementById('o-work').value, lining:document.getElementById('o-lin').value, design:v('o-design'), photos:[...garmentPhotos], trial:v('o-trial'), delivery:v('o-del'), priority:document.getElementById('o-pri').value, qty:v('o-qty') },
     pricing: { items:[...priceItems], discountType:dtype, discountVal:dval, subtotal:sub, discount:disc, total, advance:adv, balance:Math.max(0,total-adv), paymentMode:document.getElementById('p-mode').value }
   };
@@ -1711,22 +1911,24 @@ function viewOrder(id) {
   const o = orders.find(x => x.id === id); if (!o) return;
   const ini = (o.customer.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
   const fd = d => d ? new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : '—';
-  // Build measurement rows from saved dynamic fields
+  // Build measurement rows — supports multi-garment format
   const measUnit = o.measurements.unit || 'in';
-  const measGarment = o.measurements.garmentType || '';
-  const SKIP_KEYS = new Set(['unit','garmentType','notes']);
-  // Get field labels from GARMENT_FIELDS config
-  const fieldDefs = (typeof GARMENT_FIELDS !== 'undefined' && GARMENT_FIELDS[measGarment]) || [];
-  const labelMap = {};
-  fieldDefs.forEach(f => { labelMap[f.id] = { label: f.label, type: f.type }; });
-  const mrows = Object.entries(o.measurements)
-    .filter(([k, val]) => !SKIP_KEYS.has(k) && val && val !== '')
-    .map(([k, val]) => {
-      const def = labelMap[k];
-      const label = def ? def.label : k;
-      const unit  = (def && def.type === 'text') ? '' : ' ' + measUnit;
-      return `<div class="dl"><span class="dl-key">${label}</span><span class="dl-val">${val}${unit}</span></div>`;
-    }).join('');
+  const garmentList = o.measurements.garments || [];
+  const mrowsAll = garmentList.map(g => {
+    const fieldDefs = (typeof GARMENT_FIELDS !== 'undefined' && GARMENT_FIELDS[g.garmentType]) || [];
+    const labelMap = {};
+    fieldDefs.forEach(f => { labelMap[f.id] = { label: f.label, type: f.type }; });
+    const rows = Object.entries(g.fields || {})
+      .filter(([k, val]) => val && val !== '')
+      .map(([k, val]) => {
+        const def = labelMap[k];
+        const label = def ? def.label : k;
+        const unit  = (def && def.type === 'text') ? '' : ' ' + measUnit;
+        return `<div class="dl"><span class="dl-key">${label}</span><span class="dl-val">${val}${unit}</span></div>`;
+      }).join('');
+    return rows ? `<div class="sec-label">${g.garmentType} (${measUnit})</div><div class="card">${rows}</div>` : '';
+  }).join('');
+  const mrows = mrowsAll;
   const prows = o.pricing.items.map(p=>`<div class="dl"><span class="dl-key">${p.name} ×${p.qty}</span><span class="dl-val">₹${(p.qty*p.rate).toLocaleString()}</span></div>`).join('');
   document.getElementById('order-detail-content').innerHTML = `
     <div class="detail-header">
@@ -1767,7 +1969,7 @@ function viewOrder(id) {
         ${o.order.photos.map((src,i)=>`<div class="detail-photo-thumb" onclick="openLightbox('${src}')"><img src="${src}" alt="Photo ${i+1}"></div>`).join('')}
       </div>
     </div>` : ''}
-    </div>${mrows?`<div class="sec-label">${measGarment} Measurements (${measUnit})</div><div class="card">${mrows}</div>`:''}
+    </div>${mrows}
     <div class="sec-label">Pricing</div>
     <div class="card">
       ${prows}
@@ -1871,7 +2073,7 @@ function showToast(msg) {
 
 /* ── INIT ── */
 loadFromStorage(); renderOrders(); updateMetrics(); renderMsgs();
-renderMeasFields('Blouse');
+renderGarmentBlocks();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/DY-Threads-Service/sw.js').catch(()=>{});
 </script>
 </body>
