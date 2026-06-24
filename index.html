@@ -857,6 +857,12 @@ function preloadBlouseChart() {
   _chartImg.src = BLOUSE_CHART_URI;
 }
 
+function openChartByKey(key) {
+  const entry = (window._chartRegistry || {})[key];
+  if (!entry) { showToast('Chart data not found'); return; }
+  openChartModal(entry.garmentType, entry.fields);
+}
+
 function openChartModal(garmentType, fields) {
   const overlay = document.getElementById('chart-modal-overlay');
   const title   = document.getElementById('chart-modal-title');
@@ -2650,9 +2656,14 @@ function viewOrder(id) {
       }).join('');
     // Add View Chart button for Blouse types
     const hasChart = g.garmentType === 'Blouse' || g.garmentType === 'Blouse - Alteration';
-    const fieldsJson = JSON.stringify({...g.fields, unit: measUnit}).replace(/'/g, "\'");
+    // Store fields in global registry — safe, no JSON-in-HTML-attribute
+    const chartKey = 'chart_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    if (hasChart) {
+      window._chartRegistry = window._chartRegistry || {};
+      window._chartRegistry[chartKey] = { garmentType: g.garmentType, fields: {...g.fields, unit: measUnit} };
+    }
     const chartBtn = hasChart
-      ? `<button class="view-chart-btn" onclick="openChartModal('${g.garmentType}', JSON.parse('${fieldsJson}'))">
+      ? `<button class="view-chart-btn" onclick="openChartByKey('${chartKey}')">
            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
            View measurement chart
          </button>`
@@ -2931,6 +2942,12 @@ function preloadBlouseChart() {
   _chartImg = new Image();
   _chartImg.onload = () => { _chartImgLoaded = true; };
   _chartImg.src = BLOUSE_CHART_URI;
+}
+
+function openChartByKey(key) {
+  const entry = (window._chartRegistry || {})[key];
+  if (!entry) { showToast('Chart data not found'); return; }
+  openChartModal(entry.garmentType, entry.fields);
 }
 
 function openChartModal(garmentType, fields) {
@@ -3288,9 +3305,16 @@ function showToast(msg) {
 }
 
 /* ── INIT ── */
-loadFromStorage(); renderOrders(); updateMetrics(); renderMsgs();
-renderGarmentBlocks();
-preloadBlouseChart();
+try {
+  loadFromStorage();
+  renderOrders();
+  updateMetrics();
+  renderMsgs();
+  renderGarmentBlocks();
+  preloadBlouseChart();
+} catch(e) {
+  console.error('Init error:', e);
+}
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/DY-Threads-Service/sw.js').catch(()=>{});
 </script>
 </body>
