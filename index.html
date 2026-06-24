@@ -690,6 +690,153 @@ body {
 
 
 
+
+/* ── CUSTOMER PICKER ── */
+.picker-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 997;
+  align-items: flex-end;
+  justify-content: center;
+}
+.picker-overlay.open { display: flex; }
+.picker-sheet {
+  background: var(--card);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 430px;
+  max-height: 75vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp .25s cubic-bezier(.32,0,.67,0) both;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.picker-handle {
+  width: 36px; height: 4px;
+  background: var(--sep);
+  border-radius: 2px;
+  margin: 10px auto 0;
+  flex-shrink: 0;
+}
+.picker-header {
+  padding: 14px 16px 10px;
+  border-bottom: 0.5px solid var(--sep);
+  flex-shrink: 0;
+}
+.picker-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 10px;
+  letter-spacing: -.2px;
+}
+.picker-search {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg2);
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--ink);
+  outline: none;
+}
+.picker-search::placeholder { color: var(--ink3); }
+.picker-list {
+  overflow-y: auto;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
+}
+.picker-item {
+  display: flex;
+  align-items: center;
+  padding: 13px 16px;
+  gap: 12px;
+  border-bottom: 0.5px solid var(--sep);
+  cursor: pointer;
+  transition: background .1s;
+}
+.picker-item:last-child { border-bottom: none; }
+.picker-item:active { background: var(--bg2); }
+.picker-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--gold-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+.picker-info { flex: 1; min-width: 0; }
+.picker-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.picker-meta {
+  font-size: 12px;
+  color: var(--ink3);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.picker-wa-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #128c7e;
+  background: #e8f9ee;
+  padding: 3px 8px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.picker-empty {
+  text-align: center;
+  padding: 32px 20px;
+  color: var(--ink3);
+  font-size: 14px;
+}
+/* Selected customer pill in comms */
+.selected-customer-pill {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--gold-light);
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+.selected-customer-pill.visible { display: flex; }
+.scp-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.scp-info { flex: 1; min-width: 0; }
+.scp-name { font-size: 14px; font-weight: 600; color: var(--ink); }
+.scp-phone { font-size: 12px; color: var(--ink3); margin-top: 1px; }
+.scp-clear {
+  background: none; border: none;
+  color: var(--ink3); font-size: 18px;
+  cursor: pointer; padding: 0 4px;
+  line-height: 1;
+}
+
 /* ── GARMENT BLOCKS ── */
 .garment-block {
   background: var(--card);
@@ -1303,7 +1450,23 @@ body {
 <div class="page" id="page-comm">
   <div class="sec-label">Fill in details</div>
   <div class="card">
-    <div class="form-row"><label>Customer</label><input id="msg-name" placeholder="Name" oninput="renderMsgs()"></div>
+    <!-- Selected customer pill -->
+    <div class="selected-customer-pill" id="selected-cust-pill">
+      <div class="scp-avatar" id="scp-avatar"></div>
+      <div class="scp-info">
+        <div class="scp-name" id="scp-name"></div>
+        <div class="scp-phone" id="scp-phone"></div>
+      </div>
+      <button class="scp-clear" onclick="clearSelectedCustomer()" title="Clear">✕</button>
+    </div>
+    <div class="form-row" id="cust-picker-row" onclick="openCustomerPicker()" style="cursor:pointer">
+      <label>Customer</label>
+      <div style="display:flex;align-items:center;gap:6px;color:var(--ink3);font-size:14px">
+        <span id="msg-name-display">Tap to select</span>
+        <svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M1 1l6 5-6 5" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <input type="hidden" id="msg-name" value="">
+    </div>
     <div class="form-row"><label>WhatsApp No.</label>
       <div style="display:flex;align-items:center;gap:6px;flex:1;justify-content:flex-end">
         <span style="font-size:15px;color:var(--ink3)">+</span>
@@ -1434,6 +1597,19 @@ body {
 </div>
 
 
+
+
+<!-- CUSTOMER PICKER SHEET -->
+<div class="picker-overlay" id="cust-picker-overlay" onclick="closeCustomerPicker(event)">
+  <div class="picker-sheet">
+    <div class="picker-handle"></div>
+    <div class="picker-header">
+      <div class="picker-title">Select customer</div>
+      <input class="picker-search" id="picker-search" placeholder="Search name or phone…" oninput="filterPickerList(this.value)">
+    </div>
+    <div class="picker-list" id="picker-list"></div>
+  </div>
+</div>
 
 <!-- DATE PICKER MODAL (Safari PWA fix) -->
 <div class="date-modal-overlay" id="date-modal-overlay" onclick="cancelDatePicker(event)">
@@ -2251,7 +2427,7 @@ function fd(val) {
   return new Date(val).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
 }
 function renderMsgs() {
-  const name = document.getElementById('msg-name').value.trim()||'[Customer name]';
+  const name = (document.getElementById('msg-name').value||'').trim()||'[Customer name]';
   const phone = (document.getElementById('msg-phone').value||'').replace(/\D/g,'');
   const gar = document.getElementById('msg-gar').value.trim()||'[garment]';
   const date = fd(document.getElementById('msg-date').value);
@@ -2264,6 +2440,137 @@ function renderMsgs() {
   document.getElementById('msg-fest').textContent = `🎊 Festive Season Special!\n\nNamaste ${name} ji! 🙏\n\nCelebrate in style — enjoy *10% off* all stitching this season at ${shop}!\n\n🪡 Limited slots available. Book now!\n📞 Call or WhatsApp to reserve.\n\n✂️ ${shop} — Crafted with care`;
 }
 
+
+
+/* ── CUSTOMER PICKER ── */
+let _pickerOrders = [];  // deduplicated customer list from orders
+
+function openCustomerPicker() {
+  // Build unique customer list from orders (latest order per customer phone)
+  const seen = new Set();
+  _pickerOrders = [];
+  orders.forEach(o => {
+    const key = o.customer.phone || o.customer.name;
+    if (!seen.has(key)) {
+      seen.add(key);
+      _pickerOrders.push(o);
+    }
+  });
+
+  renderPickerList('');
+  document.getElementById('picker-search').value = '';
+  document.getElementById('cust-picker-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('picker-search').focus(), 300);
+}
+
+function closeCustomerPicker(e) {
+  if (!e || e.target === document.getElementById('cust-picker-overlay')) {
+    document.getElementById('cust-picker-overlay').classList.remove('open');
+  }
+}
+
+function filterPickerList(q) {
+  renderPickerList(q);
+}
+
+function renderPickerList(q) {
+  const list = document.getElementById('picker-list');
+  const query = (q || '').toLowerCase();
+  const filtered = _pickerOrders.filter(o =>
+    o.customer.name.toLowerCase().includes(query) ||
+    (o.customer.phone || '').includes(query) ||
+    (o.customer.wa || '').includes(query)
+  );
+
+  if (!filtered.length) {
+    list.innerHTML = `<div class="picker-empty">${orders.length === 0 ? 'No orders yet — add customers first' : 'No customers match your search'}</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(o => {
+    const ini = (o.customer.name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    const phone = o.customer.wa || o.customer.phone || '';
+    const garment = o.order ? o.order.garment : '';
+    const hasWa = !!(o.customer.wa || o.customer.phone);
+    return `<div class="picker-item" onclick="selectCustomerFromPicker('${o.id}')">
+      <div class="picker-avatar">${ini}</div>
+      <div class="picker-info">
+        <div class="picker-name">${o.customer.name}</div>
+        <div class="picker-meta">${phone ? '+' + phone.replace(/\D/g,'') : 'No phone'} ${garment ? '· ' + garment : ''}</div>
+      </div>
+      ${hasWa ? '<span class="picker-wa-badge">WA ✓</span>' : ''}
+    </div>`;
+  }).join('');
+}
+
+function selectCustomerFromPicker(orderId) {
+  const o = orders.find(x => x.id === orderId);
+  if (!o) return;
+
+  // Close picker
+  document.getElementById('cust-picker-overlay').classList.remove('open');
+
+  // Fill hidden fields
+  document.getElementById('msg-name').value = o.customer.name || '';
+
+  // Phone: prefer WhatsApp number, fallback to mobile; add 91 if 10 digits
+  let phone = (o.customer.wa || o.customer.phone || '').replace(/\D/g, '');
+  if (phone.length === 10) phone = '91' + phone;
+  document.getElementById('msg-phone').value = phone;
+
+  // Fill garment from latest order
+  if (o.order && o.order.garment) {
+    document.getElementById('msg-gar').value = o.order.garment;
+  }
+
+  // Fill balance
+  if (o.pricing && o.pricing.balance !== undefined) {
+    document.getElementById('msg-bal').value = o.pricing.balance;
+  }
+
+  // Fill delivery date
+  if (o.order && o.order.delivery) {
+    document.getElementById('msg-date').value = o.order.delivery;
+    const btn = document.getElementById('msg-date-btn');
+    if (btn) {
+      btn.textContent = new Date(o.order.delivery + 'T00:00:00').toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'});
+      btn.classList.remove('empty');
+    }
+  }
+
+  // Show selected customer pill
+  const ini = (o.customer.name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  const phone_display = (o.customer.wa || o.customer.phone || '');
+  document.getElementById('scp-avatar').textContent = ini;
+  document.getElementById('scp-name').textContent = o.customer.name;
+  document.getElementById('scp-phone').textContent = phone_display ? '+' + phone_display.replace(/\D/g,'') : 'No phone';
+  document.getElementById('selected-cust-pill').classList.add('visible');
+
+  // Update picker row display
+  document.getElementById('msg-name-display').textContent = o.customer.name;
+  document.getElementById('msg-name-display').style.color = 'var(--ink)';
+
+  // Hide picker row, show change option
+  document.getElementById('cust-picker-row').querySelector('span').textContent = 'Change';
+
+  renderMsgs();
+  showToast(o.customer.name + ' selected ✓');
+}
+
+function clearSelectedCustomer() {
+  document.getElementById('msg-name').value = '';
+  document.getElementById('msg-phone').value = '';
+  document.getElementById('msg-gar').value = '';
+  document.getElementById('msg-bal').value = '';
+  document.getElementById('msg-date').value = '';
+  const btn = document.getElementById('msg-date-btn');
+  if (btn) { btn.textContent = 'Select date'; btn.classList.add('empty'); }
+  document.getElementById('selected-cust-pill').classList.remove('visible');
+  document.getElementById('msg-name-display').textContent = 'Tap to select';
+  document.getElementById('msg-name-display').style.color = '';
+  document.getElementById('cust-picker-row').querySelector('span').textContent = 'Tap to select';
+  renderMsgs();
+}
 
 /* ── MESSAGE CUSTOMER FROM ORDER DETAIL ── */
 function messageCustomer(id) {
