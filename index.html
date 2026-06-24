@@ -2433,11 +2433,11 @@ function renderMsgs() {
   const date = fd(document.getElementById('msg-date').value);
   const bal = document.getElementById('msg-bal').value||'0';
   const shop = localStorage.getItem('ds-shopname')||'DY-Threads';
-  document.getElementById('msg-confirm').textContent = `Namaste ${name} ji! 🙏\n\nYour order for *${gar}* has been confirmed with ${shop}.\n📅 Delivery date: ${date}\n\nWe'll notify you once it's ready.\n\nThank you for choosing us! ✂️`;
-  document.getElementById('msg-ready').textContent = `Namaste ${name} ji! 🙏\n\nGreat news! Your *${gar}* is ready for pickup. 🎉\n\n💰 Balance due: $${bal}\n\nPlease visit us at your convenience.\n\n✂️ ${shop}`;
-  document.getElementById('msg-trial').textContent = `Namaste ${name} ji! 🙏\n\nThis is a reminder for your *trial fitting* for your ${gar} on ${date}.\n\nPlease arrive 10 minutes early. To reschedule, reply to this message.\n\n✂️ ${shop}`;
-  document.getElementById('msg-pay').textContent = `Namaste ${name} ji! 🙏\n\nKindly note that a balance of *$${bal}* is pending for your ${gar}.\n\nYou can pay via Cash, Card, or Bank transfer at the time of collection.\n\nThank you! ✂️ ${shop}`;
-  document.getElementById('msg-fest').textContent = `🎊 Festive Season Special!\n\nNamaste ${name} ji! 🙏\n\nCelebrate in style — enjoy *10% off* all stitching this season at ${shop}!\n\n🪡 Limited slots available. Book now!\n📞 Call or WhatsApp to reserve.\n\n✂️ ${shop} — Crafted with care`;
+  document.getElementById('msg-confirm').textContent = `Dear ${name} ! 🙏\n\nYour order for *${gar}* has been confirmed with ${shop}.\n📅 Delivery date: ${date}\n\nWe'll notify you once it's ready.\n\nThank you for choosing us! ✂️`;
+  document.getElementById('msg-ready').textContent = `Dear ${name} ! 🙏\n\nGreat news! Your *${gar}* is ready for pickup. 🎉\n\n💰 Balance due: $${bal}\n\nPlease visit us at your convenience.\n\n✂️ ${shop}`;
+  document.getElementById('msg-trial').textContent = `Dear ${name} ! 🙏\n\nThis is a reminder for your *trial fitting* for your ${gar} on ${date}.\n\nPlease arrive 10 minutes early. To reschedule, reply to this message.\n\n✂️ ${shop}`;
+  document.getElementById('msg-pay').textContent = `Dear ${name} ! 🙏\n\nKindly note that a balance of *$${bal}* is pending for your ${gar}.\n\nYou can pay via Cash, Card, or Bank transfer at the time of collection.\n\nThank you! ✂️ ${shop}`;
+  document.getElementById('msg-fest').textContent = `🎊 Festive Season Special!\n\nDear ${name} ! 🙏\n\nCelebrate in style — enjoy *10% off* all stitching this season at ${shop}!\n\n🪡 Limited slots available. Book now!\n📞 Call or WhatsApp to reserve.\n\n✂️ ${shop} — Crafted with care`;
 }
 
 
