@@ -1061,7 +1061,7 @@ body {
     Orders
     <div class="nav-pip"></div>
   </button>
-  <button class="nav-btn" onclick="showPage('new-order')" id="nav-new-order">
+  <button class="nav-btn" onclick="newOrder()" id="nav-new-order">
     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
     New
     <div class="nav-pip"></div>
@@ -1571,7 +1571,7 @@ function showPage(p) {
   if (p === 'orders') { renderOrders(); updateMetrics(); }
   if (p === 'comm') renderMsgs();
   if (p === 'settings') loadSettings();
-  if (p === 'new-order') { if (!editingOrderId) resetForm(); document.getElementById('nav-new-order').classList.add('active'); }
+  if (p === 'new-order') { document.getElementById('nav-new-order').classList.add('active'); }
   window.scrollTo(0, 0);
 }
 
@@ -1592,6 +1592,21 @@ function goStep(n) {
     }
   });
   window.scrollTo(0, 0);
+}
+
+
+function newOrder() {
+  editingOrderId = null;   // always clear any in-progress edit
+  resetForm();
+  // Navigate
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-new-order').classList.add('active');
+  document.getElementById('nav-new-order').classList.add('active');
+  window.scrollTo(0, 0);
+  // Reset save button text in case it was changed to "Update order"
+  const saveBtn = document.querySelector('#s4 .btn-gold');
+  if (saveBtn) saveBtn.textContent = 'Save order';
 }
 
 function resetForm() {
