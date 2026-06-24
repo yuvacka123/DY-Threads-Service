@@ -1164,6 +1164,8 @@ body {
           <span class="chip" onclick="addGarmentBlock('Blouse')">+ Blouse</span>
           <span class="chip" onclick="addGarmentBlock('Sudi')">+ Sudi</span>
           <span class="chip" onclick="addGarmentBlock('Pre-Pleating')">+ Pre-Pleating</span>
+          <span class="chip" onclick="addGarmentBlock('Blouse - Alteration')" style="border-color:#fed7aa;color:#b8975a">+ Blouse Alt.</span>
+          <span class="chip" onclick="addGarmentBlock('Sudi - Alteration')" style="border-color:#fed7aa;color:#b8975a">+ Sudi Alt.</span>
         </div>
       </div>
     </div>
@@ -1657,6 +1659,30 @@ const GARMENT_FIELDS = {
     { id: 'pp-width',        label: 'Width',             type: 'number' },
     { id: 'pp-pleats',       label: 'No. of Pleats',     type: 'number' },
     { id: 'pp-hipsize',      label: 'Hip Size',          type: 'number' },
+  ],
+  'Blouse - Alteration': [
+    { id: 'ba-fulllen',      label: 'Full Length',       type: 'number' },
+    { id: 'ba-neckf',        label: 'Neck (F)',          type: 'number' },
+    { id: 'ba-neckb',        label: 'Neck (B)',          type: 'number' },
+    { id: 'ba-shoulder',     label: 'Shoulder',          type: 'number' },
+    { id: 'ba-upperchest',   label: 'Upper Chest',       type: 'number' },
+    { id: 'ba-midchest',     label: 'Middle Chest',      type: 'number' },
+    { id: 'ba-underbust',    label: 'Under Bust',        type: 'number' },
+    { id: 'ba-armhole',      label: 'Armhole',           type: 'number' },
+    { id: 'ba-sleevelen',    label: 'Sleeve Length',     type: 'number' },
+    { id: 'ba-sleeveopen',   label: 'Sleeve Open',       type: 'number' },
+    { id: 'ba-sleevedesign', label: 'Sleeve Design',     type: 'text'   },
+    { id: 'ba-neckdesign',   label: 'Neck Design',       type: 'text'   },
+  ],
+  'Sudi - Alteration': [
+    { id: 'sa-toplen',       label: 'Top Length',        type: 'number' },
+    { id: 'sa-neckf',        label: 'Neck (F)',          type: 'number' },
+    { id: 'sa-neckb',        label: 'Neck (B)',          type: 'number' },
+    { id: 'sa-shoulder',     label: 'Shoulder',          type: 'number' },
+    { id: 'sa-sideopenlen',  label: 'Side Open Length',  type: 'number' },
+    { id: 'sa-armhole',      label: 'Armhole',           type: 'number' },
+    { id: 'sa-sleevelen',    label: 'Sleeve Length',     type: 'number' },
+    { id: 'sa-sleeveopen',   label: 'Sleeve Open',       type: 'number' },
   ],
 };
 
