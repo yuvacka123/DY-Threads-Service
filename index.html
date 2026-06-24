@@ -1304,6 +1304,12 @@ body {
   <div class="sec-label">Fill in details</div>
   <div class="card">
     <div class="form-row"><label>Customer</label><input id="msg-name" placeholder="Name" oninput="renderMsgs()"></div>
+    <div class="form-row"><label>WhatsApp No.</label>
+      <div style="display:flex;align-items:center;gap:6px;flex:1;justify-content:flex-end">
+        <span style="font-size:15px;color:var(--ink3)">+</span>
+        <input id="msg-phone" type="tel" placeholder="919876543210" oninput="renderMsgs()" style="text-align:right;flex:1;max-width:180px">
+      </div>
+    </div>
     <div class="form-row"><label>Garment</label><input id="msg-gar" placeholder="Salwar Kameez" oninput="renderMsgs()"></div>
     <div class="form-row"><label>Balance ($)</label><input type="number" id="msg-bal" placeholder="0" oninput="renderMsgs()" style="text-align:right"></div>
     <div class="form-row"><label>Delivery date</label><button class="date-display empty" id="msg-date-btn" onclick="openDatePicker('msg-date', 'Delivery Date')">Select date</button>
@@ -1313,27 +1319,72 @@ body {
   <div class="wa-card">
     <div class="wa-header"><div class="wa-title"><div class="wa-icon">💬</div>Order confirmation</div></div>
     <div class="wa-body" id="msg-confirm"></div>
-    <div class="wa-footer"><button class="copy-btn" onclick="copyMsg('msg-confirm')">Copy message</button></div>
+    <div class="wa-footer" style="display:flex;gap:8px">
+      <button class="copy-btn" style="flex:1" onclick="copyMsg('msg-confirm')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy
+      </button>
+      <button class="copy-btn" style="flex:1;background:#e8f9ee;color:#128c7e;font-weight:600" onclick="sendWhatsApp('msg-confirm')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        WhatsApp
+      </button>
+    </div>
   </div>
   <div class="wa-card">
     <div class="wa-header"><div class="wa-title"><div class="wa-icon">✅</div>Ready for pickup</div></div>
     <div class="wa-body" id="msg-ready"></div>
-    <div class="wa-footer"><button class="copy-btn" onclick="copyMsg('msg-ready')">Copy message</button></div>
+    <div class="wa-footer" style="display:flex;gap:8px">
+      <button class="copy-btn" style="flex:1" onclick="copyMsg('msg-ready')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy
+      </button>
+      <button class="copy-btn" style="flex:1;background:#e8f9ee;color:#128c7e;font-weight:600" onclick="sendWhatsApp('msg-ready')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        WhatsApp
+      </button>
+    </div>
   </div>
   <div class="wa-card">
     <div class="wa-header"><div class="wa-title"><div class="wa-icon">📅</div>Trial fitting reminder</div></div>
     <div class="wa-body" id="msg-trial"></div>
-    <div class="wa-footer"><button class="copy-btn" onclick="copyMsg('msg-trial')">Copy message</button></div>
+    <div class="wa-footer" style="display:flex;gap:8px">
+      <button class="copy-btn" style="flex:1" onclick="copyMsg('msg-trial')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy
+      </button>
+      <button class="copy-btn" style="flex:1;background:#e8f9ee;color:#128c7e;font-weight:600" onclick="sendWhatsApp('msg-trial')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        WhatsApp
+      </button>
+    </div>
   </div>
   <div class="wa-card">
     <div class="wa-header"><div class="wa-title"><div class="wa-icon">💰</div>Balance reminder</div></div>
     <div class="wa-body" id="msg-pay"></div>
-    <div class="wa-footer"><button class="copy-btn" onclick="copyMsg('msg-pay')">Copy message</button></div>
+    <div class="wa-footer" style="display:flex;gap:8px">
+      <button class="copy-btn" style="flex:1" onclick="copyMsg('msg-pay')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy
+      </button>
+      <button class="copy-btn" style="flex:1;background:#e8f9ee;color:#128c7e;font-weight:600" onclick="sendWhatsApp('msg-pay')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        WhatsApp
+      </button>
+    </div>
   </div>
   <div class="wa-card">
     <div class="wa-header"><div class="wa-title"><div class="wa-icon">🎊</div>Festival offer</div></div>
     <div class="wa-body" id="msg-fest"></div>
-    <div class="wa-footer"><button class="copy-btn" onclick="copyMsg('msg-fest')">Copy message</button></div>
+    <div class="wa-footer" style="display:flex;gap:8px">
+      <button class="copy-btn" style="flex:1" onclick="copyMsg('msg-fest')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy
+      </button>
+      <button class="copy-btn" style="flex:1;background:#e8f9ee;color:#128c7e;font-weight:600" onclick="sendWhatsApp('msg-fest')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        WhatsApp
+      </button>
+    </div>
   </div>
 </div>
 
@@ -2164,9 +2215,13 @@ function viewOrder(id) {
       <div class="dl"><span class="dl-key">Type</span><span class="dl-val">${o.customer.type}</span></div>
       ${o.customer.notes?`<div class="dl"><span class="dl-key">Notes</span><span class="dl-val">${o.customer.notes}</span></div>`:''}
     </div>
-    <div class="btn-row" style="margin-top:4px">
-      <button class="btn btn-gold" style="flex:1" onclick="editOrder('${o.id}')">Edit order</button>
-      <button class="btn btn-danger" style="flex:1" onclick="deleteOrder('${o.id}')">Delete</button>
+    <div class="btn-row" style="margin-top:4px;flex-wrap:wrap">
+      <button class="btn btn-gold" style="flex:1;min-width:120px" onclick="editOrder('${o.id}')">Edit order</button>
+      <button class="btn" style="flex:1;min-width:120px;background:#e8f9ee;color:#128c7e;font-weight:600" onclick="messageCustomer('${o.id}')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        Message
+      </button>
+      <button class="btn btn-danger" style="flex:1;min-width:120px" onclick="deleteOrder('${o.id}')">Delete</button>
     </div>
     <div style="height:8px"></div>`;
   document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
@@ -2197,6 +2252,7 @@ function fd(val) {
 }
 function renderMsgs() {
   const name = document.getElementById('msg-name').value.trim()||'[Customer name]';
+  const phone = (document.getElementById('msg-phone').value||'').replace(/\D/g,'');
   const gar = document.getElementById('msg-gar').value.trim()||'[garment]';
   const date = fd(document.getElementById('msg-date').value);
   const bal = document.getElementById('msg-bal').value||'0';
@@ -2207,6 +2263,55 @@ function renderMsgs() {
   document.getElementById('msg-pay').textContent = `Namaste ${name} ji! 🙏\n\nKindly note that a balance of *$${bal}* is pending for your ${gar}.\n\nYou can pay via Cash, Card, or Bank transfer at the time of collection.\n\nThank you! ✂️ ${shop}`;
   document.getElementById('msg-fest').textContent = `🎊 Festive Season Special!\n\nNamaste ${name} ji! 🙏\n\nCelebrate in style — enjoy *10% off* all stitching this season at ${shop}!\n\n🪡 Limited slots available. Book now!\n📞 Call or WhatsApp to reserve.\n\n✂️ ${shop} — Crafted with care`;
 }
+
+
+/* ── MESSAGE CUSTOMER FROM ORDER DETAIL ── */
+function messageCustomer(id) {
+  const o = orders.find(x => x.id === id);
+  if (!o) return;
+  // Pre-fill comms fields from order data
+  const nameEl  = document.getElementById('msg-name');
+  const phoneEl = document.getElementById('msg-phone');
+  const garEl   = document.getElementById('msg-gar');
+  const balEl   = document.getElementById('msg-bal');
+  const dateEl  = document.getElementById('msg-date');
+  const dateBtnEl = document.getElementById('msg-date-btn');
+
+  if (nameEl)  nameEl.value  = o.customer.name || '';
+  // Use WhatsApp number if saved, else mobile — strip non-digits, add 91 if no country code
+  let phone = (o.customer.wa || o.customer.phone || '').replace(/\D/g, '');
+  if (phone && phone.length === 10) phone = '91' + phone; // add India code if bare 10-digit
+  if (phoneEl) phoneEl.value = phone;
+  if (garEl)   garEl.value   = o.order ? o.order.garment : '';
+  if (balEl)   balEl.value   = o.pricing ? o.pricing.balance : '';
+  if (dateEl)  dateEl.value  = o.order ? o.order.delivery : '';
+  if (dateBtnEl && o.order && o.order.delivery) {
+    dateBtnEl.textContent = new Date(o.order.delivery + 'T00:00:00').toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'});
+    dateBtnEl.classList.remove('empty');
+  }
+
+  // Navigate to comms tab
+  showPage('comm');
+  showToast('Customer details loaded ✓');
+}
+
+/* ── WHATSAPP SEND ── */
+function sendWhatsApp(msgId) {
+  const phone = (document.getElementById('msg-phone').value || '').replace(/\D/g, '');
+  if (!phone) {
+    showToast('Enter WhatsApp number first');
+    document.getElementById('msg-phone').focus();
+    return;
+  }
+  const text = document.getElementById(msgId).textContent;
+  if (!text || text.includes('[Customer name]') || text.includes('[garment]')) {
+    showToast('Fill in customer details first');
+    return;
+  }
+  const url = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(text);
+  window.open(url, '_blank');
+}
+
 function copyMsg(id) {
   navigator.clipboard.writeText(document.getElementById(id).textContent)
     .then(() => showToast('Copied ✓'));
